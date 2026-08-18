@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Objetivos estrategicos')}"></head>
+
+<head th:replace="~{layouts/app :: head('Objetivos Estratégicos - Dr. Wilson Montenegro', '/css/objetivos.css')}">
+</head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container py-5">
-    <h1 class="mb-4"><i class="fa-solid fa-list-check text-primary"></i> Objetivos Estrategicos</h1>
-    <ul class="list-group list-group-flush lead">
-        <li class="list-group-item">Digitalizar el 100% del proceso de agendamiento de citas.</li>
-        <li class="list-group-item">Reducir el tiempo de espera en la atencion presencial.</li>
-        <li class="list-group-item">Ampliar el portafolio de servicios odontologicos especializados.</li>
-        <li class="list-group-item">Fortalecer el control de inventario de insumos odontologicos.</li>
-        <li class="list-group-item">Mejorar la trazabilidad de las ventas y el historial clinico.</li>
-    </ul>
-</div>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <header th:replace="~{layouts/app :: header('objetivos')}"></header><br>
+    <section class="seccion-objetivos">
+        <div class="objetivos-box">
+            <div class="objetivos-text">
+                <h1>OBJETIVOS ESTRATÉGICOS</h1>
+                <h2>Objetivo General</h2>
+                <p>Nuestro objetivo es ayudarte a lucir la mejor sonrisa. Te ofrecemos Blanqueamiento dental, Limpieza,
+                    Prótesis dentales, Ortodoncia, Cirugía de cordales, Implantes y Coronas. Nuestros procedimientos son
+                    de alto nivel de detalle para brindarte la mejor experiencia.</p>
+                <h2>Objetivos Específicos</h2>
+                <ul>
+                    <li>Corregir maloclusiones dentales y problemas de alineación para optimizar la mordida y la función
+                        masticatoria.</li>
+                    <li>Prevenir futuros problemas dentales derivados de la mala alineación, como caries o desgaste
+                        dental irregular.</li>
+                    <li>Brindar atención personalizada basada en las necesidades de cada paciente.</li>
+                    <li>Utilizar tecnologías avanzadas para diagnósticos precisos y tratamientos eficaces.</li>
+                    <li>Fomentar hábitos de cuidado bucal antes, durante y después del tratamiento.</li>
+                </ul>
+            </div>
+            <div class="objetivos-imgs"><img th:src="@{/img/obj1.png}" alt="Atención odontológica"><img
+                    th:src="@{/img/obj2.png}" alt="Tecnología dental"></div>
+        </div>
+    </section>
+    <footer th:replace="~{layouts/app :: footer}"></footer>
 </body>
+
 </html>

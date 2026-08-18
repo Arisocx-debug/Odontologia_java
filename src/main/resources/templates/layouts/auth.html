@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Dr. Wilson Montenegro</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+    <header th:fragment="header(activePage)">
+        <div class="back">
+            <div class="menu container">
+                <img th:src="@{/img/WILSON.png}" width="50" height="50" class="logo"
+                    alt="Logo de Dr. Wilson Montenegro"><input type="checkbox" id="menu"><label for="menu"><img
+                        th:src="@{/img/menu.png}" class="menu-icono" alt="Abrir menú"></label>
+                <nav class="navbar">
+                    <ul>
+                        <li><a th:href="@{/}">Inicio</a></li>
+                        <li><a th:href="@{/mision}">Misión</a></li>
+                        <li><a th:href="@{/vision}">Visión</a></li>
+                        <li><a th:href="@{/objetivos}">Objetivos estratégicos</a></li>
+                        <li><a th:href="@{/servicios-publicos}">Servicios</a></li>
+                        <li><a th:href="@{/register}"
+                                th:classappend="${activePage == 'register'} ? 'active'">Registrarse</a></li>
+                        <li><a th:href="@{/login}" th:classappend="${activePage == 'login'} ? 'active'">Iniciar
+                                Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <footer th:fragment="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Dr. Wilson Montenegro</h4>
+                <p>Odontología General y Especializada</p>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p>📍 Dg. 84 #79 - 36, Engativá, Bogotá, Cundinamarca, Colombia</p><a href="https://wa.me/573185377946"
+                    target="_blank" rel="noopener" class="btn-contacto whatsapp"><i class="fab fa-whatsapp"></i>318
+                    5377946</a><br><a href="mailto:wilsonmontenegroodontologia@gmail.com" class="btn-contacto correo"><i
+                        class="fas fa-envelope"></i>wilsonmontenegroodontologia@gmail.com</a>
+            </div>
+            <div class="footer-col">
+                <h4>Créditos</h4>
+                <p>Hecho por:<br> Joel Pabon, Juan Siaucho, Laura Castro y Andrés Barrios</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 - Todos los derechos reservados</p>
+        </div>
+        <script src="http://localhost:35729/livereload.js?snipver=1"></script>
+    </footer>
+</body>
+
+</html>

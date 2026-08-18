@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Vision')}"></head>
+
+<head th:replace="~{layouts/app :: head('Visión - Dr. Wilson Montenegro', '/css/vision.css')}"></head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container py-5">
-    <h1 class="mb-4"><i class="fa-solid fa-eye text-primary"></i> Nuestra Vision</h1>
-    <p class="lead">
-        Ser reconocidos en 2030 como el consultorio odontologico de referencia en la localidad de Engativa,
-        distinguidos por la excelencia clinica, la innovacion tecnologica y el trato humano hacia cada paciente.
-    </p>
-</div>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <header th:replace="~{layouts/app :: header('vision')}"></header><br>
+    <section class="seccion-vision">
+        <div class="vision-box">
+            <div class="vision-text">
+                <h1>NUESTRA VISIÓN</h1>
+                <p>Ser líderes en la transformación de sonrisas, ofreciendo tratamientos innovadores, personalizados y
+                    de alta calidad que promuevan la salud bucal y el bienestar de cada paciente, destacándonos por
+                    nuestro compromiso con la excelencia, la tecnología avanzada y la atención humana.</p>
+            </div>
+            <div class="vision-imgs"><img th:src="@{/img/retenedores.jpg}" alt="Retenedores"><img
+                    th:src="@{/img/implantes.jpg}" alt="Implantes"><img th:src="@{/img/consultorio.webp}"
+                    alt="Consultorio"></div>
+        </div>
+    </section><br><br><br><br><br>
+    <footer th:replace="~{layouts/app :: footer}"></footer>
 </body>
+
 </html>

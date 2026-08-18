@@ -1,45 +1,90 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Inicio')}"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Dr. Wilson Montenegro</title>
+    <link rel="stylesheet" th:href="@{/css/estilos-index.css}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div th:replace="~{fragments/footer :: alertas}"></div>
-
-<section class="hero text-center">
-    <div class="container">
-        <h1 class="display-4 fw-bold"><i class="fa-solid fa-tooth"></i> Odontologia Dr. Wilson Montenegro</h1>
-        <p class="lead">Cuidando tu sonrisa con calidez humana y tecnologia de punta.</p>
-        <a href="/register" class="btn btn-light btn-lg text-primary fw-bold mt-3">Agenda tu cita</a>
-    </div>
-</section>
-
-<div class="container py-5">
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <div class="card card-servicio h-100 p-4">
-                <i class="fa-solid fa-calendar-check fa-3x text-primary mb-3"></i>
-                <h4>Agenda facil</h4>
-                <p class="text-muted">Programa tus citas en linea, sin llamadas ni filas.</p>
+    <header>
+        <div class="back">
+            <div class="menu container">
+                <img th:src="@{/img/WILSON.png}" width="50" height="50" class="logo"
+                    alt="Logo de Dr. Wilson Montenegro">
+                <input type="checkbox" id="menu">
+                <label for="menu">
+                    <img th:src="@{/img/menu.png}" class="menu-icono" alt="Abrir menú">
+                </label>
+                <nav class="navbar">
+                    <ul>
+                        <li><a th:href="@{/}" class="active">Inicio</a></li>
+                        <li><a href="/mision">Misión</a></li>
+                        <li><a href="/vision">Visión</a></li>
+                        <li><a href="/objetivos">Objetivos estratégicos</a></li>
+                        <li><a href="/servicios-publicos">Servicios</a></li>
+                        <li><a href="/register">Registrarse</a></li>
+                        <li><a href="/login">Iniciar Sesión</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card card-servicio h-100 p-4">
-                <i class="fa-solid fa-user-doctor fa-3x text-primary mb-3"></i>
-                <h4>Atencion profesional</h4>
-                <p class="text-muted">Equipo especializado en odontologia general y estetica.</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card card-servicio h-100 p-4">
-                <i class="fa-solid fa-shield-heart fa-3x text-primary mb-3"></i>
-                <h4>Confianza</h4>
-                <p class="text-muted">Historial, facturas y seguimiento siempre disponibles.</p>
-            </div>
-        </div>
-    </div>
-</div>
+    </header>
 
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <main>
+        <h1 class="title3">BIENVENIDO</h1>
+        <h2 class="title3">Dr. Wilson Montenegro Odontología General y Especializada</h2>
+        <section class="seccion-inicio">
+            <div class="inicio-box">
+                <div class="inicio-text">
+                    <h1>Introducción</h1>
+                    <p>
+                        Luce la mejor sonrisa con Dr. Wilson Montenegro. Si quieres tener esa sonrisa que siempre has
+                        deseado, en
+                        <strong>Dr. Wilson Montenegro Odontología General y Especializada</strong>
+                        podemos ayudarte.
+                    </p>
+                </div>
+                <img th:src="@{/img/clinica.png}" alt="Clínica" class="mision-img">
+            </div>
+        </section>
+        <div class="mapa">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m16!1m11!1m3!1d3!2d-74.0949084!3d4.705575700000001!2m2!1f0!2f90!3m2!1i1024!2i768!4f75!3m3!1m2!1s0x8e3f9b9adf4e5a7d%3A0xcbb42c1a23d04b57!2sDr.%20Wilson%20Montenegro%20Odontolog%C3%ADa%20General%20y%20Especializada!4v1781038536693"
+                width="600" height="450" style="border:0;" allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade" title="Ubicación del consultorio"></iframe>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Dr. Wilson Montenegro</h4>
+                <p>Odontología General y Especializada</p>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p>📍 Dg. 84 #79 - 36, Engativá, Bogotá, Cundinamarca, Colombia</p>
+                <a href="https://wa.me/573185377946" target="_blank" rel="noopener" class="btn-contacto whatsapp"><i
+                        class="fab fa-whatsapp"></i>318 5377946</a>
+                <br>
+                <a href="mailto:wilsonmontenegroodontologia@gmail.com" class="btn-contacto correo"><i
+                        class="fas fa-envelope"></i>wilsonmontenegroodontologia@gmail.com</a>
+            </div>
+            <div class="footer-col">
+                <h4>Créditos</h4>
+                <p>Hecho por:<br> Joel Pabon, Juan Siaucho, Laura Castro y Andrés Barrios</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 - Todos los derechos reservados</p>
+        </div>
+    </footer>
+    <script src="http://localhost:35729/livereload.js?snipver=1"></script>
 </body>
+
 </html>
