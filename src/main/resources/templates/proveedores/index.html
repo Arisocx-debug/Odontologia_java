@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Proveedores')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/footer :: alertas}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fa-solid fa-truck text-primary"></i> Proveedores</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProveedor">
+            <i class="fa-solid fa-plus"></i> Nuevo proveedor
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white shadow-sm">
+            <thead class="table-primary">
+            <tr><th>#</th><th>Nombre</th><th>Contacto</th><th>Telefono</th><th>Email</th><th>Direccion</th><th class="text-end">Acciones</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${proveedores}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.nombre}"></td>
+                <td th:text="${p.contacto}"></td>
+                <td th:text="${p.telefono}"></td>
+                <td th:text="${p.email}"></td>
+                <td th:text="${p.direccion}"></td>
+                <td class="text-end table-actions">
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                            th:data-bs-target="'#editarProv' + ${p.id}"><i class="fa-solid fa-pen"></i></button>
+                    <form th:action="@{'/admin/proveedores/' + ${p.id}}" method="post" class="d-inline"
+                          onsubmit="return confirm('Eliminar este proveedor?');">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(proveedores)}">
+                <td colspan="7" class="text-center text-muted py-4">No hay proveedores registrados.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalProveedor" tabindex="-1">
+    <div class="modal-dialog">
+        <form th:action="@{/admin/proveedores}" method="post" class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Nuevo proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">Nombre</label><input name="nombre" class="form-control" required></div>
+                <div class="mb-3"><label class="form-label">Contacto</label><input name="contacto" class="form-control"></div>
+                <div class="mb-3"><label class="form-label">Telefono</label><input name="telefono" class="form-control"></div>
+                <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control"></div>
+                <div class="mb-3"><label class="form-label">Direccion</label><input name="direccion" class="form-control"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" th:id="'editarProv' + ${p.id}" tabindex="-1" th:each="p : ${proveedores}">
+    <div class="modal-dialog">
+        <form th:action="@{'/admin/proveedores/' + ${p.id}}" method="post" class="modal-content">
+            <input type="hidden" name="_method" value="put">
+            <div class="modal-header"><h5 class="modal-title">Editar proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">Nombre</label><input name="nombre" class="form-control" th:value="${p.nombre}" required></div>
+                <div class="mb-3"><label class="form-label">Contacto</label><input name="contacto" class="form-control" th:value="${p.contacto}"></div>
+                <div class="mb-3"><label class="form-label">Telefono</label><input name="telefono" class="form-control" th:value="${p.telefono}"></div>
+                <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" th:value="${p.email}"></div>
+                <div class="mb-3"><label class="form-label">Direccion</label><input name="direccion" class="form-control" th:value="${p.direccion}"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

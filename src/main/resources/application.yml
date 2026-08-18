@@ -1,0 +1,70 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: drwilson_montenegro
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_DATABASE:drwilson_montenegro}?useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # 'update' crea/actualiza las tablas automaticamente a partir de las entidades.
+      # En produccion se recomienda usar 'validate' + migraciones con Flyway/Liquibase.
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+
+  thymeleaf:
+    cache: true
+    encoding: UTF-8
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+# ── Configuracion JWT ──────────────────────────────────────────────
+app:
+  jwt:
+    # Clave secreta usada para firmar los tokens (cambiar en produccion, usar variable de entorno)
+    secret: ${JWT_SECRET:T2RvbnRvbG9naWFfV2lsc29uX01vbnRlbmVncm8zMTMyMDcyMDgwQA==}
+    # Expiracion del token en milisegundos (24 horas)
+    expiration-ms: 86400000
+    # Nombre de la cookie donde se guarda el JWT para las vistas Thymeleaf
+    cookie-name: odontologia_token
+    cookie-secure: false
+    cookie-same-site: Strict
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080}
+
+  # Horario laboral permitido para agendar citas (igual que en el sistema original)
+  horario:
+    apertura: "06:00"
+    cierre: "20:00"
+
+  contacto:
+    telefono: "3185377946"
+    email: "wilsonmontenegroodontologia@gmail.com"
+    direccion: "Dg. 84 #79 - 36, Engativa, Bogota, Cundinamarca, Colombia"
+
+logging:
+  level:
+    com.wilsonmontenegro.odontologia: INFO
+    org.springframework.security: WARN

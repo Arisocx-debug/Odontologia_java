@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Mision')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container py-5">
+    <h1 class="mb-4"><i class="fa-solid fa-bullseye text-primary"></i> Nuestra Mision</h1>
+    <p class="lead">
+        Brindar servicios odontologicos integrales de la mas alta calidad, combinando calidez humana,
+        etica profesional y tecnologia moderna, para mejorar la salud bucal y la calidad de vida de
+        nuestros pacientes en Bogota y sus alrededores.
+    </p>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

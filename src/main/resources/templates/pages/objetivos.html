@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Objetivos estrategicos')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container py-5">
+    <h1 class="mb-4"><i class="fa-solid fa-list-check text-primary"></i> Objetivos Estrategicos</h1>
+    <ul class="list-group list-group-flush lead">
+        <li class="list-group-item">Digitalizar el 100% del proceso de agendamiento de citas.</li>
+        <li class="list-group-item">Reducir el tiempo de espera en la atencion presencial.</li>
+        <li class="list-group-item">Ampliar el portafolio de servicios odontologicos especializados.</li>
+        <li class="list-group-item">Fortalecer el control de inventario de insumos odontologicos.</li>
+        <li class="list-group-item">Mejorar la trazabilidad de las ventas y el historial clinico.</li>
+    </ul>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Servicios')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container py-5">
+    <h1 class="mb-4"><i class="fa-solid fa-tooth text-primary"></i> Nuestros Servicios</h1>
+    <div class="row">
+        <div class="col-md-4 mb-4" th:each="servicio : ${servicios}">
+            <div class="card card-servicio h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${servicio.nombre}">Servicio</h5>
+                    <p class="card-text text-muted" th:text="${servicio.descripcion}">Descripcion</p>
+                    <p class="fw-bold text-primary" th:text="'$ ' + ${#numbers.formatDecimal(servicio.costo, 0, 'COMMA', 0, 'POINT')}">$0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" th:if="${#lists.isEmpty(servicios)}">
+            <p class="text-muted">Aun no hay servicios registrados.</p>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

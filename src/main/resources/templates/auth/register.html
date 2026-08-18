@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Registrarse')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="container">
+    <div class="card auth-card shadow-sm">
+        <div class="card-body p-4">
+            <h3 class="text-center mb-4"><i class="fa-solid fa-user-plus text-primary"></i> Crear cuenta</h3>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <form th:action="@{/register}" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" name="apellido" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Correo electronico</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefono (10 digitos)</label>
+                    <input type="text" name="telefono" class="form-control" pattern="[0-9]{10}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contrasena</label>
+                    <input type="password" name="password" class="form-control" minlength="6" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Registrarme</button>
+            </form>
+
+            <p class="text-center mt-3 mb-0">
+                Ya tienes cuenta? <a th:href="@{/login}">Inicia sesion</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

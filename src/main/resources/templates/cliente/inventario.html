@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Tienda')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/footer :: alertas}"></div>
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="fa-solid fa-store text-primary"></i> Tienda de productos</h2>
+
+    <div class="row">
+        <div class="col-md-4 mb-4" th:each="item : ${items}">
+            <div class="card card-servicio h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${item.nombre}"></h5>
+                    <p class="text-muted mb-1" th:text="'Stock disponible: ' + ${item.stock}"></p>
+                    <p class="fw-bold text-primary fs-5" th:text="'$ ' + ${item.precioUnitario}"></p>
+
+                    <form th:action="@{/cliente/compras}" method="post" class="d-flex gap-2 align-items-end">
+                        <input type="hidden" name="idInventario" th:value="${item.idInventario}">
+                        <div class="flex-grow-1">
+                            <label class="form-label">Cantidad</label>
+                            <input type="number" name="cantidad" min="1" th:max="${item.stock}" value="1" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cart-plus"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" th:if="${#lists.isEmpty(items)}">
+            <p class="text-muted">No hay productos disponibles por el momento.</p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
