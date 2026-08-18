@@ -7,44 +7,60 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav me-auto">
+
+                <!-- Público -->
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/">Inicio</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/mision">Mision</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/vision">Vision</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/mision">Misión</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/vision">Visión</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/objetivos">Objetivos</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/servicios-publicos">Servicios</a></li>
 
-                <!-- Menu Administrador -->
+                <!-- Administrador -->
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/citas">Citas</a></li>
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/servicios">Servicios</a></li>
-                <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/inventario">Inventario</a></li>
+
+                <!-- INVENTARIO UNIFICADO -->
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','EMPLEADO')">
+                    <a class="nav-link" href="/inventario">Inventario</a>
+                </li>
+
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/ventas">Ventas</a></li>
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/proveedores">Proveedores</a></li>
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" href="/admin/usuarios">Usuarios</a></li>
 
-                <!-- Menu Empleado -->
+                <!-- Empleado -->
                 <li class="nav-item" sec:authorize="hasRole('EMPLEADO')"><a class="nav-link" href="/empleado/citas">Citas</a></li>
                 <li class="nav-item" sec:authorize="hasRole('EMPLEADO')"><a class="nav-link" href="/servicios">Servicios</a></li>
-                <li class="nav-item" sec:authorize="hasRole('EMPLEADO')"><a class="nav-link" href="/empleado/inventario">Inventario</a></li>
                 <li class="nav-item" sec:authorize="hasRole('EMPLEADO')"><a class="nav-link" href="/empleado/ventas">Ventas</a></li>
 
-                <!-- Menu Cliente -->
+                <!-- Cliente -->
                 <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" href="/cliente/citas">Mis Citas</a></li>
                 <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" href="/cliente/inventario">Tienda</a></li>
             </ul>
+
             <ul class="navbar-nav">
+                <!-- Sesión -->
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Registrarse</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link btn btn-light text-primary fw-bold ms-2 px-3" href="/login">Iniciar Sesion</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link btn btn-light text-primary fw-bold ms-2 px-3" href="/login">Iniciar Sesión</a>
+                </li>
+
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fa-solid fa-circle-user"></i> <span sec:authentication="name">Usuario</span>
                     </a>
+
+                    <!-- MOSTRAR ROL REAL -->
+                    <span class="nav-link text-warning" sec:authentication="principal.authorities"></span>
+
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item">Cerrar sesion</button>
+                                <button type="submit" class="dropdown-item">Cerrar sesión</button>
                             </form>
                         </li>
                     </ul>
@@ -55,3 +71,4 @@
 </nav>
 </body>
 </html>
+

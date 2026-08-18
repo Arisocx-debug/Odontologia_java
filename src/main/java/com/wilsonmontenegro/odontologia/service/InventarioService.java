@@ -1,22 +1,19 @@
 package com.wilsonmontenegro.odontologia.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
 import com.wilsonmontenegro.odontologia.model.Inventario;
 import com.wilsonmontenegro.odontologia.model.enums.EstadoInventario;
 import com.wilsonmontenegro.odontologia.repository.InventarioRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-/**
- * Logica de negocio de Inventario. Equivalente a InventarioController.php.
- * Los items inactivos no se pueden editar, actualizar ni eliminar
- * (misma regla que el `if ($item->estado === 'inactivo')` original).
- */
 @Service
 @RequiredArgsConstructor
 public class InventarioService {
@@ -24,14 +21,17 @@ public class InventarioService {
     private final InventarioRepository inventarioRepository;
 
     public List<Inventario> listarTodos() {
-        return inventarioRepository.findAll();
+        return inventarioRepository.findByEstado(EstadoInventario.ACTIVO);
     }
 
     public List<Inventario> buscar(String texto) {
         if (texto == null || texto.isBlank()) {
             return listarTodos();
         }
-        return inventarioRepository.buscar(texto.trim());
+        return inventarioRepository.buscar(texto.trim())
+                .stream()
+                .filter(i -> i.getEstado() == EstadoInventario.ACTIVO)
+                .toList();
     }
 
     public Inventario obtenerPorId(Long id) {
@@ -67,7 +67,11 @@ public class InventarioService {
     public void eliminar(Long id) {
         Inventario item = obtenerPorId(id);
         validarActivo(item, "eliminado");
-        inventarioRepository.delete(item);
+
+        item.setEstado(EstadoInventario.INACTIVO);
+        item.setUltimaActualizacion(LocalDateTime.now());
+
+        inventarioRepository.save(item);
     }
 
     @Transactional
@@ -79,7 +83,6 @@ public class InventarioService {
         return inventarioRepository.save(item);
     }
 
-    /** Descuenta stock (usado por ventas). Lanza excepcion si no hay suficiente. */
     @Transactional
     public void descontarStock(Inventario item, int cantidad) {
         if (cantidad > item.getStock()) {
@@ -105,3 +108,4 @@ public class InventarioService {
         }
     }
 }
+
