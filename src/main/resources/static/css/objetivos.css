@@ -1,0 +1,218 @@
+/* ------------------ RESET ------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #29b6f6 0%, #1e88e5 100%);
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* ------------------ CONTENEDOR ------------------ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* ------------------ HEADER ------------------ */
+.back {
+  background-color: #0a0b61;
+  padding: 15px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logo {
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+/* ------------------ NAVBAR ------------------ */
+.menu .navbar ul {
+  display: flex;
+  gap: 15px;
+  list-style: none;
+}
+
+.menu .navbar ul li a {
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.menu .navbar ul li a:hover,
+.menu .navbar ul li a.active {
+  background-color: #ffffff;
+  color: #0a0b61;
+}
+
+/* Responsive menú */
+#menu { display: none; }
+.menu-icono { width: 30px; filter: brightness(0) invert(1); }
+.menu label { cursor: pointer; display: none; }
+
+@media(max-width:991px) {
+  .menu label { display: block; }
+  .menu .navbar {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: #1565c0;
+    flex-direction: column;
+    text-align: center;
+    display: none;
+    padding: 15px 0;
+  }
+  .menu .navbar ul { flex-direction: column; gap: 10px; }
+  #menu:checked ~ .navbar { display: flex; }
+}
+
+/* ------------------ SECCIÓN OBJETIVOS ------------------ */
+.seccion-objetivos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #29b6f6, #1e88e5);
+}
+
+.objetivos-box {
+  background: #ffffff;
+  padding: 30px 35px;
+  border-radius: 20px;
+  max-width: 1100px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 25px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  align-items: stretch;
+  border-top: 8px solid #0a0b61;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.objetivos-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+}
+
+/* Texto */
+.objetivos-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.objetivos-text h1 {
+  color: #0a0b61;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.objetivos-text h2 {
+  font-size: 22px;
+  color: #1565c0;
+  margin: 20px 0 10px;
+}
+
+.objetivos-text p,
+.objetivos-text ul {
+  font-size: 18px;
+  color: #222;
+  line-height: 1.9;
+  text-align: justify;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.objetivos-text ul {
+  list-style: disc;
+  margin-left: 25px;
+}
+
+/* Imágenes */
+.objetivos-imgs {
+  display: grid;
+  gap: 20px;
+}
+
+.objetivos-imgs img {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.objetivos-imgs img:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+  .objetivos-box {
+    grid-template-columns: 1fr;
+    padding: 25px 20px;
+    text-align: center;
+  }
+  .objetivos-text h1 {
+    font-size: 28px;
+  }
+  .objetivos-text p,
+  .objetivos-text ul {
+    font-size: 16px;
+  }
+}
+
+/* ------------------ FOOTER ------------------ */
+    footer {
+        background: linear-gradient(90deg, #0a0b61, #1565c0);
+        color: #ffffff;
+        margin-top: 40px;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.25);
+    }
+
+    .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .footer-col h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #bbdefb;
+    }
+
+    .footer-col p {
+        font-size: 14px;
+        color: #e3f2fd;
+        margin: 5px 0;
+    }
+
+    .footer-bottom {
+        background-color: rgba(0, 0, 0, 0.2);
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        color: #cfd8dc;
+    }

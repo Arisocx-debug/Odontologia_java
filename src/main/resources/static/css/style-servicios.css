@@ -1,0 +1,196 @@
+/* ------------------ RESET ------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ------------------ GENERAL ------------------ */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #29b6f6 0%, #1e88e5 100%);
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* ------------------ CONTENEDOR ------------------ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* ------------------ HEADER ------------------ */
+.back {
+  background-color: #0a0b61;
+  padding: 15px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logo {
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+/* ------------------ NAVBAR ------------------ */
+.menu .navbar ul {
+  display: flex;
+  gap: 15px;
+  list-style: none;
+}
+
+.menu .navbar ul li a {
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.menu .navbar ul li a:hover,
+.menu .navbar ul li a.active {
+  background-color: #ffffff;
+  color: #0a0b61;
+}
+
+/* Responsive menú */
+#menu { display: none; }
+.menu-icono { width: 30px; filter: brightness(0) invert(1); }
+.menu label { cursor: pointer; display: none; }
+
+@media(max-width:991px) {
+  .menu label { display: block; }
+  .menu .navbar {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: #1565c0;
+    flex-direction: column;
+    text-align: center;
+    display: none;
+    padding: 15px 0;
+  }
+  .menu .navbar ul { flex-direction: column; gap: 10px; }
+  #menu:checked ~ .navbar { display: flex; }
+}
+
+/* ------------------ TÍTULO ------------------ */
+.title {
+  text-align: center;
+  color: #fff;
+  font-size: 2.2rem;
+  margin: 25px 0;
+}
+
+/* ------------------ CARRUSEL SOLO CSS ------------------ */
+.serviciosuwu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carrusel-contenedor {
+  position: relative;
+  width: 80%;
+  height: 100%;
+  max-width: 800px;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+  background: #fff;
+}
+
+.carrusel {
+  display: flex;
+  width: 100%; /* 3 slides */
+
+}
+
+.slide {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.slide img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Escondemos radios */
+input[type="radio"] {
+  display: none;
+}
+
+/* Movimiento controlado por radios */
+#s1:checked ~ .carrusel { transform: translateX(0%); transition: 0.5s; }
+#s2:checked ~ .carrusel { transform: translateX(-100%); transition: 0.5s; }
+#s3:checked ~ .carrusel { transform: translateX(-200%); transition: 0.5s; }
+
+/* Botones inferiores (navegación) */
+.navegacion {
+  position: absolute;
+  width: 100%;
+  bottom: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bar {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.bar:hover {
+  background: #fff;
+}
+
+/* ------------------ FOOTER ------------------ */
+footer {
+  background: linear-gradient(90deg, #0a0b61, #1565c0);
+  color: #ffffff;
+  margin-top: 40px;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.25);
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  text-align: center;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #bbdefb;
+}
+
+.footer-col p {
+  font-size: 14px;
+  color: #e3f2fd;
+  margin: 5px 0;
+}
+
+.footer-bottom {
+  background-color: rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  color: #cfd8dc;
+}

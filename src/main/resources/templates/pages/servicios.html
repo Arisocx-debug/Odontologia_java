@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Servicios')}"></head>
+
+<head th:replace="~{layouts/app :: head('Servicios - Dr. Wilson Montenegro', '/css/style-servicios.css')}"></head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container py-5">
-    <h1 class="mb-4"><i class="fa-solid fa-tooth text-primary"></i> Nuestros Servicios</h1>
-    <div class="row">
-        <div class="col-md-4 mb-4" th:each="servicio : ${servicios}">
-            <div class="card card-servicio h-100">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${servicio.nombre}">Servicio</h5>
-                    <p class="card-text text-muted" th:text="${servicio.descripcion}">Descripcion</p>
-                    <p class="fw-bold text-primary" th:text="'$ ' + ${#numbers.formatDecimal(servicio.costo, 0, 'COMMA', 0, 'POINT')}">$0</p>
-                </div>
+    <header th:replace="~{layouts/app :: header('servicios-publicos')}"></header><br>
+    <h1 class="title">NUESTROS SERVICIOS</h1><br>
+    <section class="serviciosuwu">
+        <div class="carrusel-contenedor"><input type="radio" name="slide" id="s1" checked><input type="radio"
+                name="slide" id="s2"><input type="radio" name="slide" id="s3">
+            <div class="carrusel">
+                <div class="slide"><img th:src="@{/img/servicio1.jpg}" alt="Blanqueamiento Dental"></div>
+                <div class="slide"><img th:src="@{/img/servicio2.jpg}" alt="Implantes Dentales"></div>
+                <div class="slide"><img th:src="@{/img/servicio3.jpg}" alt="Ortodoncia"></div>
             </div>
+            <div class="navegacion"><label for="s1" class="bar"></label><label for="s2" class="bar"></label><label
+                    for="s3" class="bar"></label></div>
         </div>
-        <div class="col-12" th:if="${#lists.isEmpty(servicios)}">
-            <p class="text-muted">Aun no hay servicios registrados.</p>
-        </div>
-    </div>
-</div>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    </section><br><br><br>
+    <footer th:replace="~{layouts/app :: footer}"></footer>
 </body>
+
 </html>

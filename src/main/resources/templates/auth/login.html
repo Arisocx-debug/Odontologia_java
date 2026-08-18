@@ -1,37 +1,21 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Iniciar Sesion')}"></head>
+
+<head th:replace="~{layouts/auth :: head('Iniciar Sesión - Dr. Wilson Montenegro')}"></head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-
-<div class="container">
-    <div class="card auth-card shadow-sm">
-        <div class="card-body p-4">
-            <h3 class="text-center mb-4"><i class="fa-solid fa-right-to-bracket text-primary"></i> Iniciar Sesion</h3>
-
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-
-            <form th:action="@{/login}" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Correo electronico</label>
-                    <input type="email" name="email" class="form-control" required autofocus>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Contrasena</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-            </form>
-
-            <p class="text-center mt-3 mb-0">
-                Aun no tienes cuenta? <a th:href="@{/register}">Registrate</a>
-            </p>
+    <header th:replace="~{layouts/auth :: header('login')}"></header><br><br><br><br><br><br>
+    <main>
+        <div class="login-container">
+            <h2>Iniciar Sesión</h2>
+            <form method="post" th:action="@{/login}"><input type="email" name="email" placeholder="Correo electrónico"
+                    required><input type="password" name="password" placeholder="Contraseña" required><button
+                    type="submit">Ingresar</button></form>
+            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
         </div>
-    </div>
-</div>
-
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    </main>
+    <br><br><br><br><br><br>
+    <footer th:replace="~{layouts/auth :: footer}"></footer>
 </body>
+
 </html>

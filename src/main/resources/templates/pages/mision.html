@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Mision')}"></head>
+
+<head th:replace="~{layouts/app :: head('Misión - Dr. Wilson Montenegro', '/css/mision.css')}"></head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<div class="container py-5">
-    <h1 class="mb-4"><i class="fa-solid fa-bullseye text-primary"></i> Nuestra Mision</h1>
-    <p class="lead">
-        Brindar servicios odontologicos integrales de la mas alta calidad, combinando calidez humana,
-        etica profesional y tecnologia moderna, para mejorar la salud bucal y la calidad de vida de
-        nuestros pacientes en Bogota y sus alrededores.
-    </p>
-</div>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <header th:replace="~{layouts/app :: header('mision')}"></header>
+    <section class="seccion-mision">
+        <div class="mision-box">
+            <div class="mision-text">
+                <h1>NUESTRA MISIÓN</h1>
+                <p>Brindar servicios odontológicos integrales de la más alta calidad, combinando tecnología avanzada,
+                    materiales innovadores y un enfoque personalizado para mejorar la salud bucal y la calidad de vida
+                    de nuestros pacientes. Nos comprometemos a crear sonrisas saludables en un ambiente profesional,
+                    cálido y confiable.</p>
+            </div><img th:src="@{/img/mision.webp}" alt="Misión" class="mision-img">
+        </div>
+    </section>
+    <footer th:replace="~{layouts/app :: footer}"></footer>
 </body>
+
 </html>
