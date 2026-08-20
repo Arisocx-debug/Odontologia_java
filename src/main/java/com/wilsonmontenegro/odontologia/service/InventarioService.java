@@ -20,10 +20,12 @@ public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
 
+    // Mostrar solo activos
     public List<Inventario> listarTodos() {
         return inventarioRepository.findByEstado(EstadoInventario.ACTIVO);
     }
 
+    // Buscar solo activos
     public List<Inventario> buscar(String texto) {
         if (texto == null || texto.isBlank()) {
             return listarTodos();
@@ -50,7 +52,6 @@ public class InventarioService {
     @Transactional
     public Inventario actualizar(Long id, Inventario datos) {
         Inventario item = obtenerPorId(id);
-        validarActivo(item, "actualizado");
         validarDatos(datos);
 
         item.setNombre(datos.getNombre());
@@ -66,22 +67,32 @@ public class InventarioService {
     @Transactional
     public void eliminar(Long id) {
         Inventario item = obtenerPorId(id);
-        validarActivo(item, "eliminado");
 
+        // Eliminar = marcar INACTIVO (sin validar estado)
         item.setEstado(EstadoInventario.INACTIVO);
         item.setUltimaActualizacion(LocalDateTime.now());
 
         inventarioRepository.save(item);
     }
 
-    @Transactional
-    public Inventario toggleEstado(Long id) {
-        Inventario item = obtenerPorId(id);
-        item.setEstado(item.getEstado() == EstadoInventario.ACTIVO
-                ? EstadoInventario.INACTIVO
-                : EstadoInventario.ACTIVO);
-        return inventarioRepository.save(item);
+  @Transactional
+public Inventario toggleEstado(Long id) {
+    Inventario item = obtenerPorId(id);
+
+    // Validar que el producto tenga datos mínimos antes de activarlo
+    if (item.getEstado() == EstadoInventario.INACTIVO) {
+        validarDatos(item); // evita activar productos incompletos
     }
+
+    item.setEstado(
+            item.getEstado() == EstadoInventario.ACTIVO
+                    ? EstadoInventario.INACTIVO
+                    : EstadoInventario.ACTIVO
+    );
+
+    item.setUltimaActualizacion(LocalDateTime.now());
+    return inventarioRepository.save(item);
+}
 
     @Transactional
     public void descontarStock(Inventario item, int cantidad) {
@@ -93,12 +104,6 @@ public class InventarioService {
         inventarioRepository.save(item);
     }
 
-    private void validarActivo(Inventario item, String accion) {
-        if (item.getEstado() == EstadoInventario.INACTIVO) {
-            throw new BusinessException("Este producto esta deshabilitado y no puede ser " + accion + ".");
-        }
-    }
-
     private void validarDatos(Inventario datos) {
         if (datos.getStock() == null || datos.getStock() < 0) {
             throw new BusinessException("El stock no puede ser negativo.");
@@ -108,4 +113,3 @@ public class InventarioService {
         }
     }
 }
-
