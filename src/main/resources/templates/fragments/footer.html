@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer">
+    <div class="text-center py-3 text-muted">
+        © 2026 Odontología - Todos los derechos reservados
+    </div>
+</footer>
+
+<!-- Fragmento para scripts -->
+<div th:fragment="scripts">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</div>
+
+<!-- Fragmento para alertas -->
+<div th:fragment="alertas">
+    <div th:if="${mensaje}" class="alert alert-info text-center" th:text="${mensaje}"></div>
+</div>
+</body>
+</html>
