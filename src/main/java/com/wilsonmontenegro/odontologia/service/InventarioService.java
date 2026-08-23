@@ -65,15 +65,11 @@ public class InventarioService {
     }
 
     @Transactional
-    public void eliminar(Long id) {
-        Inventario item = obtenerPorId(id);
+public void eliminar(Long id) {
+    inventarioRepository.deleteById(id);
+}
 
-        // Eliminar = marcar INACTIVO (sin validar estado)
-        item.setEstado(EstadoInventario.INACTIVO);
-        item.setUltimaActualizacion(LocalDateTime.now());
 
-        inventarioRepository.save(item);
-    }
 
   @Transactional
 public Inventario toggleEstado(Long id) {

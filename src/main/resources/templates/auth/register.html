@@ -8,12 +8,16 @@
     <main>
         <div class="login-container">
             <h2>Registrarse</h2>
-            <form method="post" th:action="@{/register}"><input type="text" name="Nombre" placeholder="Nombre"
-                    required><input type="text" name="Apellido" placeholder="Apellido" required><input type="email"
-                    name="email" placeholder="Correo electrónico" required><input type="tel" name="Telefono"
-                    placeholder="Celular" pattern="[0-9]{10}" maxlength="10"
-                    title="El número debe tener exactamente 10 dígitos" required><input type="password" name="password"
-                    placeholder="Contraseña" required><button type="submit">Registrarse</button></form>
+            <form method="post" th:action="@{/register}">
+    <input type="text" name="nombre" placeholder="Nombre" required>
+    <input type="text" name="apellido" placeholder="Apellido" required>
+    <input type="email" name="email" placeholder="Correo electrónico" required>
+    <input type="tel" name="telefono" placeholder="Celular" pattern="[0-9]{10}" maxlength="10"
+           title="El número debe tener exactamente 10 dígitos" required>
+    <input type="password" name="password" placeholder="Contraseña" required>
+    <button type="submit">Registrarse</button>
+</form>
+
             <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión aquí</a></p>
         </div>
     </main>

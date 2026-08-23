@@ -37,7 +37,6 @@ public class InventarioWebController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
     public String store(@RequestParam String nombre,
                         @RequestParam Integer stock,
                         @RequestParam BigDecimal precioUnitario,
@@ -56,7 +55,6 @@ public class InventarioWebController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
     public String update(@PathVariable Long id,
                          @RequestParam String nombre,
                          @RequestParam Integer stock,
@@ -81,23 +79,23 @@ public class InventarioWebController {
         return "redirect:/inventario";
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
-    public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    // ⭐ ELIMINAR USANDO POST (FUNCIONA SIEMPRE)
+   @DeleteMapping("/{id}")
+@PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
+public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-        try {
-            inventarioService.eliminar(id);
-            redirectAttributes.addFlashAttribute("success", "Producto eliminado correctamente.");
-
-        } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
-
-        return "redirect:/inventario";
+    try {
+        inventarioService.eliminar(id);
+        redirectAttributes.addFlashAttribute("success", "Producto eliminado correctamente.");
+    } catch (BusinessException e) {
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
 
+    return "redirect:/inventario";
+}
+
+
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
     public String toggleEstado(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
         inventarioService.toggleEstado(id);
@@ -106,4 +104,5 @@ public class InventarioWebController {
         return "redirect:/inventario";
     }
 }
+
 

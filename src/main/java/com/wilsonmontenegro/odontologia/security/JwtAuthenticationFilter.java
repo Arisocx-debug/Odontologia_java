@@ -8,20 +8,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import io.jsonwebtoken.Claims;
 
-/**
- * Filtro que se ejecuta en cada peticion HTTP.
- * Busca el JWT primero en el header "Authorization: Bearer ..." (uso tipico de API REST)
- * y, si no esta, en una cookie HttpOnly (para que las paginas Thymeleaf tambien funcionen
- * con el navegador sin necesidad de JavaScript manual).
- */
+import java.io.IOException;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -42,15 +40,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolverToken(request);
 
         if (token != null && jwtTokenProvider.esTokenValido(token)) {
-            String email = jwtTokenProvider.obtenerEmail(token);
+
+            Claims claims = jwtTokenProvider.extraerClaims(token);
+
+            String email = claims.getSubject();
+            String rol = claims.get("rol", String.class); // ADMINISTRADOR, EMPLEADO, CLIENTE
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
+
                 UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                GrantedAuthority authority =
+                        new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + rol);
 
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                List.of(authority)
+                        );
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
@@ -75,3 +85,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
+
+

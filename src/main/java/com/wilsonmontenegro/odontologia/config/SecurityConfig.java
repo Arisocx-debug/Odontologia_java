@@ -20,10 +20,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import com.wilsonmontenegro.odontologia.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
-
-
-
-
+import org.springframework.http.HttpMethod;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +51,12 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    // 🔥 Filtro necesario para DELETE/PUT/PATCH en formularios HTML
+    @Bean
+public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+    return new HiddenHttpMethodFilter();
+}
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -60,11 +64,13 @@ public class SecurityConfig {
             // CSRF para formularios Thymeleaf
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**") // API sin CSRF
             )
 
-            // Sesiones normales para formularios
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+            // Sesiones SOLO para vistas Thymeleaf
+            .sessionManagement(sm -> sm
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            )
 
             .authenticationProvider(authenticationProvider())
 
@@ -83,8 +89,17 @@ public class SecurityConfig {
                     "/api/auth/**"
                 ).permitAll()
 
-                // INVENTARIO (ADMIN y EMPLEADO)
+                // INVENTARIO
                 .requestMatchers("/inventario/**")
+                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+
+                .requestMatchers(HttpMethod.DELETE, "/inventario/**")
+                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+
+                .requestMatchers(HttpMethod.PUT, "/inventario/**")
+                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+
+                .requestMatchers(HttpMethod.PATCH, "/inventario/**")
                     .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
                 // ADMIN
@@ -103,13 +118,17 @@ public class SecurityConfig {
                 .requestMatchers("/servicios/**")
                     .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
+                // API con JWT
+                .requestMatchers("/api/**").authenticated()
+
                 .anyRequest().authenticated()
             )
 
-            // JWT solo para APIs
+            // Filtro JWT SOLO para API
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
+
 
