@@ -83,7 +83,7 @@ public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
 
                 // Público
                 .requestMatchers(
-                    "/", "/mision", "/vision", "/objetivos", "/servicios-publicos",
+                    "/", "/mision", "/vision", "/objetivos", "/servicios-publicos","/servicios/publicos",
                     "/login", "/register", "/logout", "/error/**",
                     "/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico",
                     "/api/auth/**"

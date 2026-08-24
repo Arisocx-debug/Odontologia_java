@@ -27,6 +27,11 @@ public class ServicioWebController {
         return "servicios/index";
     }
 
+    @GetMapping("/publicos")
+public String serviciosPublicos() {
+    return "servicios/publicos";
+}
+
     @PostMapping
     public String store(@RequestParam String nombre,
                          @RequestParam String descripcion,

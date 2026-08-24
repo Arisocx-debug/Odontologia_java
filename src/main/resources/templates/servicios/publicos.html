@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nuestros Servicios</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #007BFF 40%);
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: #0d47a1;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+        }
+
+        .hero h1 {
+            color: #ffffff;
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #ffffff;
+            font-size: 18px;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+
+        .servicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+            transition: .3s;
+            border-top: 5px solid #2196f3;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .precio {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .volver {
+            display: block;
+            width: 260px;
+            margin: 50px auto;
+            text-align: center;
+            text-decoration: none;
+            background: #1565c0;
+            color: white;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: .3s;
+        }
+
+        .volver:hover {
+            background: #0d47a1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #ffffff;
+        }
+
+        .HeroFooter {
+            background: #0d47a1;
+            padding: 20px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <section class="hero">
+
+        <h1>Nuestros Servicios Odontológicos</h1>
+
+        <p>
+            Brindamos atención odontológica integral para toda la familia,
+            con profesionales capacitados y tratamientos de calidad.
+        </p>
+
+    </section>
+
+
+    <div class="container">
+
+        <div class="servicios-grid">
+
+            <div class="card">
+
+                <h3>Limpieza Dental</h3>
+
+                <p>
+                    Eliminación de placa bacteriana y sarro para mantener una
+                    correcta salud oral.
+                </p>
+
+                <div class="precio">$80.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Blanqueamiento Dental</h3>
+
+                <p>
+                    Tratamiento estético para mejorar el color de los dientes
+                    y recuperar una sonrisa más brillante.
+                </p>
+
+                <div class="precio">$250.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Ortodoncia</h3>
+
+                <p>
+                    Corrección de la posición dental y mejora de la mordida
+                    mediante tratamientos especializados.
+                </p>
+
+                <div class="precio">Desde $1.500.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Extracción Dental</h3>
+
+                <p>
+                    Procedimiento seguro para retirar piezas dentales dañadas
+                    o que afecten la salud bucal.
+                </p>
+
+                <div class="precio">$120.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Endodoncia</h3>
+
+                <p>
+                    Tratamiento de conductos para conservar piezas dentales
+                    afectadas por infecciones o caries profundas.
+                </p>
+
+                <div class="precio">$350.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Implante Dental</h3>
+
+                <p>
+                    Solución permanente para reemplazar dientes perdidos y
+                    recuperar la funcionalidad de la sonrisa.
+                </p>
+
+                <div class="precio">$2.000.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Diseño de Sonrisa</h3>
+
+                <p>
+                    Tratamiento estético enfocado en mejorar la armonía y
+                    apariencia de la sonrisa.
+                </p>
+
+                <div class="precio">Desde $1.000.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Control Odontológico</h3>
+
+                <p>
+                    Revisión preventiva para detectar y tratar problemas
+                    dentales a tiempo.
+                </p>
+
+                <div class="precio">$60.000</div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Radiografía Dental</h3>
+
+                <p>
+                    Estudios diagnósticos que permiten evaluar el estado
+                    interno de dientes y maxilares.
+                </p>
+
+                <div class="precio">$50.000</div>
+
+            </div>
+
+        </div>
+
+
+        <a th:href="@{/cliente/citas}"
+           class="volver">
+
+            Volver al Inicio
+
+        </a>
+
+    </div>
+
+
+    <div class="HeroFooter">
+
+        <footer>
+
+            Clínica Odontológica • Atención para toda la familia
+
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
