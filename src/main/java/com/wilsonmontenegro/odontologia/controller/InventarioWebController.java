@@ -79,21 +79,19 @@ public class InventarioWebController {
         return "redirect:/inventario";
     }
 
-    // ⭐ ELIMINAR USANDO POST (FUNCIONA SIEMPRE)
-   @DeleteMapping("/{id}")
-@PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
-public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','EMPLEADO')")
+    public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-    try {
-        inventarioService.eliminar(id);
-        redirectAttributes.addFlashAttribute("success", "Producto eliminado correctamente.");
-    } catch (BusinessException e) {
-        redirectAttributes.addFlashAttribute("error", e.getMessage());
+        try {
+            inventarioService.eliminar(id);
+            redirectAttributes.addFlashAttribute("success", "Producto eliminado correctamente.");
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/inventario";
     }
-
-    return "redirect:/inventario";
-}
-
 
     @PatchMapping("/{id}/estado")
     public String toggleEstado(@PathVariable Long id, RedirectAttributes redirectAttributes) {
