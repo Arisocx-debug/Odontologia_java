@@ -21,7 +21,8 @@ import java.util.List;
 
 /**
  * Logica de negocio de citas: agendar, editar, eliminar, con las mismas reglas
- * que existian repetidas en AdminCitaController / EmpleadoCitaController / ClienteCitaController.
+ * que existian repetidas en AdminCitaController / EmpleadoCitaController /
+ * ClienteCitaController.
  * <p>
  * Reglas replicadas 1:1 desde Laravel:
  * 1. La fecha de entrada no puede ser pasada.
@@ -68,7 +69,10 @@ public class CitaService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada"));
     }
 
-    /** Agendar cita desde el panel de Administrador o Empleado (pueden fijar el estado). */
+    /**
+     * Agendar cita desde el panel de Administrador o Empleado (pueden fijar el
+     * estado).
+     */
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.SERIALIZABLE)
     public Cita agendar(LocalDateTime fechaEntrada, Long idServicio, Long idCliente, EstadoCita estado) {
         LocalDateTime fechaSalida = calcularFechaSalida(fechaEntrada);
@@ -123,7 +127,10 @@ public class CitaService {
         return citaRepository.save(cita);
     }
 
-    /** Actualizar como cliente: no puede cambiar de estado (siempre vuelve a Pendiente). */
+    /**
+     * Actualizar como cliente: no puede cambiar de estado (siempre vuelve a
+     * Pendiente).
+     */
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.SERIALIZABLE)
     public Cita actualizarComoCliente(Long id, LocalDateTime fechaEntrada, Long idServicio, Long usuarioId) {
         Cita cita = obtenerPorId(id);
@@ -174,7 +181,8 @@ public class CitaService {
         if (horaEntrada.isBefore(apertura) || horaEntrada.isAfter(cierre)
                 || horaSalida.isBefore(apertura) || horaSalida.isAfter(cierre)) {
             throw new BusinessException(
-                    "Las citas solo pueden agendarse dentro del horario laboral (" + horaApertura + " a " + horaCierre + ").");
+                    "Las citas solo pueden agendarse dentro del horario laboral (" + horaApertura + " a " + horaCierre
+                            + ").");
         }
 
         citaRepository.buscarSolapamiento(entrada, salida, excluirId).ifPresent(disponibleDesde -> {

@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidad Cliente. Equivalente al modelo Cliente.php (tabla `cliente`) de Laravel.
- * Relaciona 1 a 1 con Usuario (todo cliente tiene un usuario asociado con rol CLIENTE).
+ * Entidad Cliente. Equivalente al modelo Cliente.php (tabla `cliente`) de
+ * Laravel.
+ * Relaciona 1 a 1 con Usuario (todo cliente tiene un usuario asociado con rol
+ * CLIENTE).
  */
 @Entity
 @Table(name = "cliente")
@@ -28,7 +30,10 @@ public class Cliente {
     @JoinColumn(name = "id", referencedColumnName = "id")
     private Usuario usuario;
 
-    /** Servicio de preferencia/asociado (columna heredada del esquema original, opcional). */
+    /**
+     * Servicio de preferencia/asociado (columna heredada del esquema original,
+     * opcional).
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idservicio")
     private Servicio servicio;

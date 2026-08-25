@@ -22,7 +22,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * Entidad Cita. Equivalente al modelo Cita.php (tabla `cita`) de Laravel.
- * Representa una cita odontologica agendada por un cliente, empleado o administrador.
+ * Representa una cita odontologica agendada por un cliente, empleado o
+ * administrador.
  */
 @Entity
 @Table(name = "cita")
@@ -48,7 +49,10 @@ public class Cita {
     @Builder.Default
     private EstadoCita estado = EstadoCita.PENDIENTE;
 
-    /** Tipo de cita (texto libre, ej: "Consulta", "Control", heredado del sistema original). */
+    /**
+     * Tipo de cita (texto libre, ej: "Consulta", "Control", heredado del sistema
+     * original).
+     */
     @Column(length = 50)
     private String tipo;
 

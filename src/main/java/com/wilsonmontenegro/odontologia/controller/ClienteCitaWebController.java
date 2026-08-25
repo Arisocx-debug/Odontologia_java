@@ -19,7 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 
 /**
- * Portal del cliente: solo puede ver, agendar, editar y cancelar SUS PROPIAS citas.
+ * Portal del cliente: solo puede ver, agendar, editar y cancelar SUS PROPIAS
+ * citas.
  * Equivalente a ClienteCitaController.php.
  */
 @Controller
@@ -41,16 +42,35 @@ public class ClienteCitaWebController {
     }
 
     @PostMapping
-    public String store(@RequestParam LocalDateTime fechaEntrada,
-                         @RequestParam Long idservicio,
-                         RedirectAttributes redirectAttributes) {
+    public String store(
+            @RequestParam LocalDateTime fechaEntrada,
+            @RequestParam Long idservicio,
+            RedirectAttributes redirectAttributes) {
+
         try {
             Long usuarioId = AuthUtil.idUsuarioActual();
-            citaService.agendarComoCliente(fechaEntrada, idservicio, usuarioId);
-            redirectAttributes.addFlashAttribute("success", "Tu cita fue agendada correctamente.");
+
+            System.out.println("=================================");
+            System.out.println("USUARIO ID ACTUAL: " + usuarioId);
+            System.out.println("SERVICIO ID: " + idservicio);
+            System.out.println("FECHA: " + fechaEntrada);
+            System.out.println("=================================");
+
+            citaService.agendarComoCliente(
+                    fechaEntrada,
+                    idservicio,
+                    usuarioId);
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Tu cita fue agendada correctamente.");
+
         } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage());
         }
+
         return "redirect:/cliente/citas";
     }
 
@@ -67,9 +87,9 @@ public class ClienteCitaWebController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id,
-                          @RequestParam LocalDateTime fechaEntrada,
-                          @RequestParam Long idservicio,
-                          RedirectAttributes redirectAttributes) {
+            @RequestParam LocalDateTime fechaEntrada,
+            @RequestParam Long idservicio,
+            RedirectAttributes redirectAttributes) {
         try {
             Long usuarioId = AuthUtil.idUsuarioActual();
             citaService.actualizarComoCliente(id, fechaEntrada, idservicio, usuarioId);
@@ -106,7 +126,8 @@ public class ClienteCitaWebController {
         citaService.validarPropietario(cita, AuthUtil.idUsuarioActual());
         byte[] excel = excelService.generarExcelFactura(cita);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentType(
+                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factura_" + id + ".xlsx")
                 .body(excel);
     }

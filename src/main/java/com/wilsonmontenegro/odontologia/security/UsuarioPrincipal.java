@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Adaptador entre la entidad Usuario y el UserDetails que exige Spring Security.
+ * Adaptador entre la entidad Usuario y el UserDetails que exige Spring
+ * Security.
  * El rol se expone como authority con prefijo ROLE_ (ej: ROLE_ADMINISTRADOR),
  * que es la convencion que usa Spring Security para hasRole()/hasAuthority().
  */
