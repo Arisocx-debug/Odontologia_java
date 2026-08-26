@@ -26,18 +26,32 @@
         <table class="table table-hover align-middle bg-white shadow-sm">
             <thead class="table-primary">
             <tr>
-                <th>#</th><th>Nombre</th><th>Stock</th><th>Precio unitario</th>
-                <th>Proveedor</th><th>Estado</th><th class="text-end">Acciones</th>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Stock</th>
+                <th>Precio unitario</th>
+                <th>Proveedor</th>
+                <th>Estado</th>
+                <th class="text-end">Acciones</th>
             </tr>
             </thead>
+
             <tbody>
             <tr th:each="i : ${items}">
                 <td th:text="${i.idInventario}"></td>
                 <td th:text="${i.nombre}"></td>
+
+                <!-- Descripción ajustable -->
+                <td style="white-space: normal; word-wrap: break-word;">
+                    <span th:text="${i.descripcion}"></span>
+                </td>
+
                 <td th:text="${i.stock}"></td>
                 <td th:text="'$ ' + ${i.precioUnitario}"></td>
                 <td th:text="${i.nombreProveedor}"></td>
 
+                <!-- Estado -->
                 <td>
                     <span class="badge"
                           th:classappend="${i.estado.name() == 'ACTIVO'} ? 'bg-success' : 'bg-secondary'"
@@ -45,46 +59,53 @@
                     </span>
                 </td>
 
+                <!-- Acciones -->
                 <td class="text-end table-actions">
 
-    <!-- Editar solo ADMIN -->
-    <button class="btn btn-sm btn-outline-primary"
-            sec:authorize="hasRole('ADMINISTRADOR')"
-            data-bs-toggle="modal"
-            th:data-bs-target="'#editarItem' + ${i.idInventario}">
-        <i class="fa-solid fa-pen"></i>
-    </button>
+                    <!-- Editar -->
+                    <button class="btn btn-sm btn-outline-primary"
+                            sec:authorize="hasRole('ADMINISTRADOR')"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editarItem"
+                            th:data-id="${i.idInventario}"
+                            th:data-nombre="${i.nombre}"
+                            th:data-stock="${i.stock}"
+                            th:data-precio="${i.precioUnitario}"
+                            th:data-proveedor="${i.nombreProveedor}"
+                            th:data-descripcion="${i.descripcion}">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
 
-    <!-- Activar/Desactivar (ADMIN y EMPLEADO) -->
-   <form th:action="@{'/inventario/' + ${i.idInventario} + '/estado'}"
-      method="post" class="d-inline">
-    <input type="hidden" name="_method" value="patch">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    <button type="submit" class="btn btn-sm btn-outline-warning">
-        <i class="fa-solid fa-power-off"></i>
-    </button>
-</form>
+                    <!-- Activar/Desactivar SIN confirmación -->
+                    <form th:action="@{'/inventario/' + ${i.idInventario} + '/estado'}"
+                          method="post" class="d-inline">
+                        <input type="hidden" name="_method" value="patch">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
+                        <button type="submit"
+                                th:class="'btn btn-sm ' + (${i.estado.name() == 'ACTIVO'} ? 'btn-outline-warning' : 'btn-outline-success')"
+                                th:title="${i.estado.name() == 'ACTIVO'} ? 'Desactivar' : 'Activar'">
+                            <i class="fa-solid fa-power-off"></i>
+                        </button>
+                    </form>
 
+                    <!-- Eliminar CON confirmación -->
+                    <form th:action="@{'/inventario/' + ${i.idInventario}}"
+                          method="post" class="d-inline eliminar-form">
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('¿Seguro que deseas eliminar este producto?')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
 
-   <form th:action="@{'/inventario/' + ${i.idInventario}}"
-      method="post" class="d-inline">
-    <input type="hidden" name="_method" value="delete">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    <button type="submit" class="btn btn-danger btn-sm">
-        <i class="fa-solid fa-trash"></i>
-    </button>
-</form>
-
-
-
-</td>
-
+                </td>
             </tr>
 
             <tr th:if="${#lists.isEmpty(items)}">
-                <td colspan="7" class="text-center text-muted py-4">
+                <td colspan="8" class="text-center text-muted py-4">
                     No hay productos en inventario.
                 </td>
             </tr>
@@ -113,7 +134,11 @@
                         <input type="number" step="0.01" name="precioUnitario" class="form-control" required></div>
 
                     <div class="mb-3"><label class="form-label">Proveedor</label>
-                        <input name="nombreProveedor" class="form-control"></div>
+                        <select name="nombreProveedor" class="form-select" required>
+                            <option value="" disabled selected>Selecciona un proveedor</option>
+                            <option th:each="p : ${proveedores}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
+                        </select>
+                    </div>
 
                     <div class="mb-3"><label class="form-label">Descripción</label>
                         <textarea name="descripcion" class="form-control"></textarea></div>
@@ -128,42 +153,70 @@
     </div>
 
     <!-- Modal editar (solo ADMIN) -->
-    <div class="modal fade" th:id="'editarItem' + ${i.idInventario}"
-         th:each="i : ${items}" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR')">
-        <div class="modal-dialog">
-            <form th:action="@{${base} + '/' + ${i.idInventario}}" method="post" class="modal-content">
-                <input type="hidden" name="_method" value="put">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<div class="modal fade" id="editarItem" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR')">
+    <div class="modal-dialog">
+        <form id="formEditar" method="post" class="modal-content">
+            <input type="hidden" name="_method" value="put">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title">Editar producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="idInventario" name="idInventario">
+
+                <div class="mb-3"><label class="form-label">Nombre</label>
+                    <input id="nombre" name="nombre" class="form-control" required></div>
+
+                <div class="mb-3"><label class="form-label">Stock</label>
+                    <input id="stock" type="number" name="stock" class="form-control" required></div>
+
+                <div class="mb-3"><label class="form-label">Precio unitario</label>
+                    <input id="precioUnitario" type="number" step="0.01" name="precioUnitario" class="form-control" required></div>
+
+                <div class="mb-3"><label class="form-label">Proveedor</label>
+                    <select id="nombreProveedor" name="nombreProveedor" class="form-select" required>
+                        <option value="" disabled selected>Selecciona un proveedor</option>
+                        <option th:each="p : ${proveedores}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
+                    </select>
                 </div>
 
-                <div class="modal-body">
-                    <div class="mb-3"><label class="form-label">Nombre</label>
-                        <input name="nombre" class="form-control" th:value="${i.nombre}" required></div>
+                <div class="mb-3"><label class="form-label">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="form-control"></textarea></div>
+            </div>
 
-                    <div class="mb-3"><label class="form-label">Stock</label>
-                        <input type="number" name="stock" class="form-control" th:value="${i.stock}" required></div>
-
-                    <div class="mb-3"><label class="form-label">Precio unitario</label>
-                        <input type="number" step="0.01" name="precioUnitario"
-                               class="form-control" th:value="${i.precioUnitario}" required></div>
-
-                    <div class="mb-3"><label class="form-label">Proveedor</label>
-                        <input name="nombreProveedor" class="form-control" th:value="${i.nombreProveedor}"></div>
-
-                    <div class="mb-3"><label class="form-label">Descripción</label>
-                        <textarea name="descripcion" class="form-control"
-                                  th:text="${i.descripcion}"></textarea></div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
-                </div>
-            </form>
-        </div>
+            <!-- ✅ Botones de acción -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </form>
     </div>
 </div>
+
+                    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editarModal = document.getElementById('editarItem');
+    editarModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const nombre = button.getAttribute('data-nombre');
+        const stock = button.getAttribute('data-stock');
+        const precio = button.getAttribute('data-precio');
+        const proveedor = button.getAttribute('data-proveedor');
+        const descripcion = button.getAttribute('data-descripcion');
+
+        document.getElementById('idInventario').value = id;
+        document.getElementById('nombre').value = nombre;
+        document.getElementById('stock').value = stock;
+        document.getElementById('precioUnitario').value = precio;
+        document.getElementById('nombreProveedor').value = proveedor;
+        document.getElementById('descripcion').value = descripcion;
+
+        document.getElementById('formEditar').setAttribute('action', '/inventario/' + id);
+    });
+});
+</script>
+

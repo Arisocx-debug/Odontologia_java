@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Inventario;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
+import com.wilsonmontenegro.odontologia.service.ProveedorService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +29,13 @@ import lombok.RequiredArgsConstructor;
 public class InventarioWebController {
 
     private final InventarioService inventarioService;
+    private final ProveedorService proveedorService; // ✅ inyectamos el servicio
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String buscar, Model model) {
         model.addAttribute("items", inventarioService.buscar(buscar));
         model.addAttribute("buscar", buscar);
+        model.addAttribute("proveedores", proveedorService.listarTodos()); // ✅ usamos la instancia
         return "inventario/index";
     }
 
@@ -102,5 +105,6 @@ public class InventarioWebController {
         return "redirect:/inventario";
     }
 }
+
 
 
