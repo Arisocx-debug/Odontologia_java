@@ -3,10 +3,12 @@
         <h2><i class="fa-solid fa-boxes-stacked text-primary"></i> Inventario</h2>
 
         <!-- Solo ADMIN puede crear -->
-        <button class="btn btn-primary" sec:authorize="hasRole('ADMINISTRADOR')" 
-                data-bs-toggle="modal" data-bs-target="#modalItem">
-            <i class="fa-solid fa-plus"></i> Nuevo producto
-        </button>
+        <button class="btn btn-primary"
+        sec:authorize="hasRole('ADMINISTRADOR') or hasRole('EMPLEADO')"
+        data-bs-toggle="modal"
+        data-bs-target="#modalItem">
+    <i class="fa-solid fa-plus"></i> Nuevo producto
+</button>
     </div>
 
     <form th:action="@{${base}}" method="get" class="row g-2 mb-4">
@@ -54,6 +56,7 @@
             th:data-bs-target="'#editarItem' + ${i.idInventario}">
         <i class="fa-solid fa-pen"></i>
     </button>
+</div>
 
     <!-- Activar/Desactivar (ADMIN y EMPLEADO) -->
    <form th:action="@{'/inventario/' + ${i.idInventario} + '/estado'}"
@@ -93,7 +96,7 @@
     </div>
 
     <!-- Modal crear (solo ADMIN) -->
-    <div class="modal fade" id="modalItem" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR')">
+    <div class="modal fade" id="modalItem" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR')or hasRole('EMPLEADO')">
         <div class="modal-dialog">
             <form th:action="@{${base}}" method="post" class="modal-content">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -129,7 +132,7 @@
 
     <!-- Modal editar (solo ADMIN) -->
     <div class="modal fade" th:id="'editarItem' + ${i.idInventario}"
-         th:each="i : ${items}" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR')">
+         th:each="i : ${items}" tabindex="-1" sec:authorize="hasRole('ADMINISTRADOR') or hasRole('EMPLEADO')">
         <div class="modal-dialog">
             <form th:action="@{${base} + '/' + ${i.idInventario}}" method="post" class="modal-content">
                 <input type="hidden" name="_method" value="put">

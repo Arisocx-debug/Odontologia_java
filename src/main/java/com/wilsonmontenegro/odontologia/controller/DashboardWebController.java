@@ -1,12 +1,14 @@
 package com.wilsonmontenegro.odontologia.controller;
 
-import com.wilsonmontenegro.odontologia.dto.response.DashboardResponse;
-import com.wilsonmontenegro.odontologia.service.DashboardService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.wilsonmontenegro.odontologia.dto.response.DashboardResponse;
+import com.wilsonmontenegro.odontologia.service.DashboardService;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Panel de estadisticas. Equivalente a DashboardController.php.
@@ -17,7 +19,7 @@ public class DashboardWebController {
 
     private final DashboardService dashboardService;
 
-    @GetMapping("/admin/dashboard")
+    @GetMapping({"/admin/dashboard", "/empleado/dashboard"})
     public String index(@RequestParam(required = false) Integer anio,
                          @RequestParam(required = false) Integer mes,
                          Model model) {
