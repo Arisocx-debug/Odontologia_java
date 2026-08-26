@@ -21,20 +21,19 @@ public class InventarioService {
     private final InventarioRepository inventarioRepository;
 
     // Mostrar solo activos
-    public List<Inventario> listarTodos() {
-        return inventarioRepository.findByEstado(EstadoInventario.ACTIVO);
-    }
+public List<Inventario> listarTodos() {
+    return inventarioRepository.findAll();
+}
+
 
     // Buscar solo activos
     public List<Inventario> buscar(String texto) {
-        if (texto == null || texto.isBlank()) {
-            return listarTodos();
-        }
-        return inventarioRepository.buscar(texto.trim())
-                .stream()
-                .filter(i -> i.getEstado() == EstadoInventario.ACTIVO)
-                .toList();
+    if (texto == null || texto.isBlank()) {
+        return listarTodos();
     }
+    return inventarioRepository.buscar(texto.trim());
+}
+
 
     public Inventario obtenerPorId(Long id) {
         return inventarioRepository.findById(id)

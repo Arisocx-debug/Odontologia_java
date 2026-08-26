@@ -1,11 +1,8 @@
-// static/js/main.js
-document.addEventListener('DOMContentLoaded', () => {
-  const deleteForms = document.querySelectorAll('form[action*="/inventario/"]');
-  deleteForms.forEach(form => {
-    form.addEventListener('submit', e => {
-      if (!confirm('¿Seguro que deseas eliminar este producto?')) {
-        e.preventDefault();
-      }
+document.querySelectorAll("form.eliminar-form").forEach(form => {
+    form.addEventListener("submit", function(e) {
+        if (!confirm("¿Seguro que deseas eliminar este producto?")) {
+            e.preventDefault();
+        }
     });
-  });
 });
+

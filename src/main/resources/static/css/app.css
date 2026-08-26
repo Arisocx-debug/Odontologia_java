@@ -33,3 +33,29 @@ body {
     max-width: 450px;
     margin: 60px auto;
 }
+
+.table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table th, .table td {
+    padding: 0.75rem 0.5rem;
+    vertical-align: middle;
+}
+
+/* Solo controlar la columna de descripción, sin forzar toda la tabla */
+.table td:nth-child(3) {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* Permitir que la descripción se ajuste al contenido */
+.table td:nth-child(3) {
+    white-space: normal;      /* permite saltos de línea */
+    word-wrap: break-word;    /* corta palabras largas si es necesario */
+    max-width: none;          /* elimina el límite de ancho */
+}
