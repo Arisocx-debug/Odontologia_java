@@ -5,13 +5,46 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div th:replace="~{fragments/footer :: alertas}"></div>
 
-<!-- UN SOLO CONTENEDOR -->
 <div class="container py-4" th:with="base='/inventario'">
     <div th:replace="~{inventario/contenido :: contenido(${base})}"></div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <div th:replace="~{fragments/footer :: scripts}"></div>
+
+<!-- 🔥 Script del modal DEBE ir aquí -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const editarModal = document.getElementById("editarItem");
+
+    if (!editarModal) {
+        console.error("Modal editarItem no encontrado en el DOM");
+        return;
+    }
+
+    editarModal.addEventListener("show.bs.modal", event => {
+        const button = event.relatedTarget;
+
+        const id = button.getAttribute("data-id");
+        const nombre = button.getAttribute("data-nombre");
+        const stock = button.getAttribute("data-stock");
+        const precio = button.getAttribute("data-precio");
+        const proveedor = button.getAttribute("data-proveedor");
+        const descripcion = button.getAttribute("data-descripcion");
+
+        document.getElementById("idInventario").value = id;
+        document.getElementById("nombre").value = nombre;
+        document.getElementById("stock").value = stock;
+        document.getElementById("precioUnitario").value = precio;
+        document.getElementById("nombreProveedor").value = proveedor;
+        document.getElementById("descripcion").value = descripcion;
+
+        // Acción correcta
+        document.getElementById("formEditar").action = `/inventario/${id}`;
+    });
+});
+</script>
+
 </body>
 </html>
 
