@@ -4,10 +4,11 @@
 <body>
     <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/"><i class="fa-solid fa-tooth"></i> Dr. Wilson Montenegro</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="/"><img th:src="@{/img/WILSON.png}"
+                width="50"
+                height="50"
+                class="logo ms-2"
+                alt="Logo de Dr. Wilson Montenegro">Dr. Wilson Montenegro</a>
 
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav me-auto">
