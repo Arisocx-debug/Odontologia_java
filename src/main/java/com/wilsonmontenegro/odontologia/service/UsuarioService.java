@@ -5,9 +5,12 @@ import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
 import com.wilsonmontenegro.odontologia.model.Cliente;
 import com.wilsonmontenegro.odontologia.model.Usuario;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
+import com.wilsonmontenegro.odontologia.repository.CitaRepository;
 import com.wilsonmontenegro.odontologia.repository.ClienteRepository;
 import com.wilsonmontenegro.odontologia.repository.UsuarioRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Gestion de usuarios desde el panel de administrador. Equivalente a AdminUsuarioController.php.
+ * Gestion de usuarios desde el panel de administrador. Equivalente a
+ * AdminUsuarioController.php.
  */
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CitaRepository citaRepository;
 
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
@@ -95,12 +100,36 @@ public class UsuarioService {
 
     @Transactional
     public void eliminar(Long id) {
+
         Usuario usuario = obtenerPorId(id);
 
-        if (usuario.getRol() == Rol.ADMINISTRADOR && usuarioRepository.countByRol(Rol.ADMINISTRADOR) <= 1) {
-            throw new BusinessException("No se puede eliminar el unico administrador del sistema.");
+        // No permitir eliminar el único administrador
+        if (usuario.getRol() == Rol.ADMINISTRADOR
+                && usuarioRepository.countByRol(Rol.ADMINISTRADOR) <= 1) {
+
+            throw new BusinessException(
+                    "No se puede eliminar el único administrador del sistema.");
         }
 
+        // Si el usuario es CLIENTE, verificar si tiene citas
+        if (usuario.getRol() == Rol.CLIENTE) {
+
+            long cantidadCitas = citaRepository.countByClienteUsuarioId(id);
+
+            // Si tiene citas, no permitir la eliminación
+            if (cantidadCitas > 0) {
+
+                throw new BusinessException(
+                        "No se puede eliminar el usuario porque tiene citas relacionadas.");
+            }
+
+            // Si no tiene citas, eliminar primero el cliente
+            clienteRepository.findByUsuarioId(id).ifPresent(cliente -> {
+                clienteRepository.delete(cliente);
+            });
+        }
+
+        // Finalmente eliminar el usuario
         usuarioRepository.delete(usuario);
     }
 }

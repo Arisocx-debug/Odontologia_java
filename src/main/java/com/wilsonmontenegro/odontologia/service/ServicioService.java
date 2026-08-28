@@ -1,5 +1,7 @@
 package com.wilsonmontenegro.odontologia.service;
 
+import com.wilsonmontenegro.odontologia.exception.BusinessException;
+import com.wilsonmontenegro.odontologia.repository.CitaRepository;
 import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
 import com.wilsonmontenegro.odontologia.model.Servicio;
 import com.wilsonmontenegro.odontologia.repository.ServicioRepository;
@@ -15,6 +17,7 @@ import java.util.List;
 public class ServicioService {
 
     private final ServicioRepository servicioRepository;
+    private final CitaRepository citaRepository;
 
     public List<Servicio> listarTodos() {
         return servicioRepository.findAll();
@@ -46,7 +49,16 @@ public class ServicioService {
 
     @Transactional
     public void eliminar(Long id) {
+
         Servicio servicio = obtenerPorId(id);
+
+        long cantidadCitas = citaRepository.countByServicioIdServicio(id);
+
+        if (cantidadCitas > 0) {
+            throw new BusinessException(
+                    "No se puede eliminar el servicio porque tiene citas relacionadas.");
+        }
+
         servicioRepository.delete(servicio);
     }
 }

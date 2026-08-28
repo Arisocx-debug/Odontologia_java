@@ -64,8 +64,9 @@ public class CitaService {
         return citaRepository.findByUsuarioIdOrderByFechaEntradaDesc(usuarioId);
     }
 
+    @Transactional(readOnly = true)
     public Cita obtenerPorId(Long id) {
-        return citaRepository.findById(id)
+        return citaRepository.findByIdConRelaciones(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada"));
     }
 

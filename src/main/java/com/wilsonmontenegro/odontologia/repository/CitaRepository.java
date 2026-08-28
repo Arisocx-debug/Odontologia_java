@@ -84,4 +84,17 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
         java.math.BigDecimal sumIngresosEntreFechas(
                         @Param("desde") LocalDateTime desde,
                         @Param("hasta") LocalDateTime hasta);
+
+        @Query("""
+                        SELECT c FROM Cita c
+                        JOIN FETCH c.cliente cl
+                        JOIN FETCH cl.usuario u
+                        LEFT JOIN FETCH c.servicio s
+                        WHERE c.idCita = :id
+                        """)
+        Optional<Cita> findByIdConRelaciones(@Param("id") Long id);
+
+        long countByClienteUsuarioId(Long usuarioId);
+
+        long countByServicioIdServicio(Long idServicio);
 }

@@ -28,15 +28,15 @@ public class ServicioWebController {
     }
 
     @GetMapping("/publicos")
-public String serviciosPublicos() {
-    return "servicios/publicos";
-}
+    public String serviciosPublicos() {
+        return "servicios/publicos";
+    }
 
     @PostMapping
     public String store(@RequestParam String nombre,
-                         @RequestParam String descripcion,
-                         @RequestParam BigDecimal costo,
-                         RedirectAttributes redirectAttributes) {
+            @RequestParam String descripcion,
+            @RequestParam BigDecimal costo,
+            RedirectAttributes redirectAttributes) {
         servicioService.crear(nombre, descripcion, costo);
         redirectAttributes.addFlashAttribute("success", "Servicio creado correctamente.");
         return "redirect:/servicios";
@@ -44,10 +44,10 @@ public String serviciosPublicos() {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id,
-                          @RequestParam String nombre,
-                          @RequestParam String descripcion,
-                          @RequestParam BigDecimal costo,
-                          RedirectAttributes redirectAttributes) {
+            @RequestParam String nombre,
+            @RequestParam String descripcion,
+            @RequestParam BigDecimal costo,
+            RedirectAttributes redirectAttributes) {
         try {
             servicioService.actualizar(id, nombre, descripcion, costo);
             redirectAttributes.addFlashAttribute("success", "Servicio actualizado correctamente.");
@@ -59,8 +59,22 @@ public String serviciosPublicos() {
 
     @DeleteMapping("/{id}")
     public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        servicioService.eliminar(id);
-        redirectAttributes.addFlashAttribute("success", "Servicio eliminado correctamente.");
+
+        try {
+
+            servicioService.eliminar(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Servicio eliminado correctamente.");
+
+        } catch (BusinessException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage());
+        }
+
         return "redirect:/servicios";
     }
 }
