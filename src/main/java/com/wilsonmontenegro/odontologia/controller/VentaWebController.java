@@ -7,6 +7,7 @@ import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
 import com.wilsonmontenegro.odontologia.service.VentaService;
 import com.wilsonmontenegro.odontologia.util.AuthUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,9 +32,11 @@ public class VentaWebController {
     private final ExcelService excelService;
 
     @GetMapping({"/admin/ventas", "/empleado/ventas"})
-    public String index(Model model) {
+    public String index(Model model, HttpServletRequest request) {
         model.addAttribute("ventas", ventaService.listarTodas());
         model.addAttribute("productos", inventarioService.listarTodos());
+        String base = request.getRequestURI().startsWith("/admin") ? "/admin/ventas" : "/empleado/ventas";
+        model.addAttribute("base", base);
         return "ventas/index";
     }
 
@@ -41,7 +44,8 @@ public class VentaWebController {
     public String store(@RequestParam Long idInventario,
                          @RequestParam Integer cantidad,
                          @RequestParam(required = false, defaultValue = "0") BigDecimal descuento,
-                         RedirectAttributes redirectAttributes) {
+                         RedirectAttributes redirectAttributes,
+                         HttpServletRequest request) {
         try {
             String responsable = AuthUtil.usuarioActual() != null ? AuthUtil.usuarioActual().getName() : "N/A";
             ventaService.registrarVenta(idInventario, cantidad, descuento, responsable, "VENTA_INTERNA", null);
@@ -49,18 +53,20 @@ public class VentaWebController {
         } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/ventas";
+        String base = request.getRequestURI().startsWith("/admin") ? "/admin/ventas" : "/empleado/ventas";
+        return "redirect:" + base;
     }
 
     @DeleteMapping({"/admin/ventas/{id}", "/empleado/ventas/{id}"})
-    public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         try {
             ventaService.eliminar(id);
             redirectAttributes.addFlashAttribute("success", "Venta anulada y stock restaurado correctamente.");
         } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin/ventas";
+        String base = request.getRequestURI().startsWith("/admin") ? "/admin/ventas" : "/empleado/ventas";
+        return "redirect:" + base;
     }
 
     @GetMapping({"/admin/ventas/{id}/pdf", "/empleado/ventas/{id}/pdf"})

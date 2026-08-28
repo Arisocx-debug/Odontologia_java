@@ -1,17 +1,10 @@
 package com.wilsonmontenegro.odontologia.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Entidad Venta. Equivalente al modelo Venta.php (tabla `ventas`) de Laravel.
- */
 @Entity
 @Table(name = "ventas")
 @Data
@@ -29,7 +22,6 @@ public class Venta {
     @JoinColumn(name = "producto_id", nullable = false)
     private Inventario producto;
 
-    /** Usuario cliente que realizo la compra; nulo para ventas internas. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comprador_usuario_id")
     private Usuario comprador;
@@ -64,3 +56,4 @@ public class Venta {
         this.updatedAt = LocalDateTime.now();
     }
 }
+

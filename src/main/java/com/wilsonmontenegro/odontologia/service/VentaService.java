@@ -32,11 +32,11 @@ public class VentaService {
     private final UsuarioRepository usuarioRepository;
 
     public List<Venta> listarTodas() {
-        return ventaRepository.findAllByOrderByCreatedAtDesc();
+        return ventaRepository.findAllConProductoYComprador();
     }
 
     public Venta obtenerPorId(Long id) {
-        return ventaRepository.findById(id)
+        return ventaRepository.findByIdConProductoYComprador(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Venta no encontrada"));
     }
 
@@ -121,6 +121,6 @@ public class VentaService {
     }
 
     public List<Venta> reporte() {
-        return ventaRepository.findAll();
+        return ventaRepository.findAllConProductoYComprador();
     }
 }

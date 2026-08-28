@@ -50,11 +50,31 @@
             <div class="modal-header"><h5 class="modal-title">Nuevo proveedor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-3"><label class="form-label">Nombre</label><input name="nombre" class="form-control" required></div>
-                <div class="mb-3"><label class="form-label">Contacto</label><input name="contacto" class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Telefono</label><input name="telefono" class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Direccion</label><input name="direccion" class="form-control"></div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input name="nombre" class="form-control" required minlength="2" maxlength="100"
+                           pattern="[A-Za-zÀ-ÿ0-9\s.,-]+" title="Ingresa un nombre válido (mínimo 2 caracteres)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contacto</label>
+                    <input name="contacto" class="form-control" required minlength="2" maxlength="100"
+                           pattern="[A-Za-zÀ-ÿ\s.]+" title="Ingresa un nombre de contacto válido (solo letras)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefono</label>
+                    <input name="telefono" class="form-control" type="tel" required maxlength="10"
+                           pattern="[0-9]{10}" title="Debe tener exactamente 10 dígitos numéricos">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required maxlength="150"
+                           pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Ingresa un correo electrónico válido (debe contener @ y dominio)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Direccion</label>
+                    <input name="direccion" class="form-control" required minlength="5" maxlength="150"
+                           title="Ingresa una dirección válida (mínimo 5 caracteres)">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -71,11 +91,31 @@
             <div class="modal-header"><h5 class="modal-title">Editar proveedor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-3"><label class="form-label">Nombre</label><input name="nombre" class="form-control" th:value="${p.nombre}" required></div>
-                <div class="mb-3"><label class="form-label">Contacto</label><input name="contacto" class="form-control" th:value="${p.contacto}"></div>
-                <div class="mb-3"><label class="form-label">Telefono</label><input name="telefono" class="form-control" th:value="${p.telefono}"></div>
-                <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" th:value="${p.email}"></div>
-                <div class="mb-3"><label class="form-label">Direccion</label><input name="direccion" class="form-control" th:value="${p.direccion}"></div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input name="nombre" class="form-control" th:value="${p.nombre}" required minlength="2" maxlength="100"
+                           pattern="[A-Za-zÀ-ÿ0-9\s.,-]+" title="Ingresa un nombre válido (mínimo 2 caracteres)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contacto</label>
+                    <input name="contacto" class="form-control" th:value="${p.contacto}" required minlength="2" maxlength="100"
+                           pattern="[A-Za-zÀ-ÿ\s.]+" title="Ingresa un nombre de contacto válido (solo letras)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefono</label>
+                    <input name="telefono" class="form-control" type="tel" th:value="${p.telefono}" required maxlength="10"
+                           pattern="[0-9]{10}" title="Debe tener exactamente 10 dígitos numéricos">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" th:value="${p.email}" required maxlength="150"
+                           pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Ingresa un correo electrónico válido (debe contener @ y dominio)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Direccion</label>
+                    <input name="direccion" class="form-control" th:value="${p.direccion}" required minlength="5" maxlength="150"
+                           title="Ingresa una dirección válida (mínimo 5 caracteres)">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
