@@ -7,41 +7,61 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <div class="container py-4">
-        <h2 class="mb-4"><i class="fa-solid fa-chart-line text-primary"></i> Panel de Estadisticas</h2>
+
+        <h2 class="mb-4">
+            <i class="fa-solid fa-chart-line text-primary"></i>
+            Panel de Estadisticas
+        </h2>
+
+        <!-- MENSAJE DE ERROR -->
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <strong>⚠️ Error:</strong>
+            <span th:text="${error}"></span>
+        </div>
 
         <form method="get" class="row g-2 mb-4">
+
             <div class="col-md-3">
                 <label class="form-label">Año</label>
+
                 <input type="number" name="anio" th:value="${stats.anio}" class="form-control">
             </div>
+
             <div class="col-md-3">
                 <label class="form-label">Mes (opcional)</label>
 
                 <select name="mes" class="form-select">
+
                     <option value="">Todo el año</option>
 
                     <option th:each="m : ${#numbers.sequence(1,12)}" th:value="${m}"
                         th:selected="${stats.mes != null and stats.mes == m}" th:text="${m == 1 ? 'Enero' :
-                          m == 2 ? 'Febrero' :
-                          m == 3 ? 'Marzo' :
-                          m == 4 ? 'Abril' :
-                          m == 5 ? 'Mayo' :
-                          m == 6 ? 'Junio' :
-                          m == 7 ? 'Julio' :
-                          m == 8 ? 'Agosto' :
-                          m == 9 ? 'Septiembre' :
-                          m == 10 ? 'Octubre' :
-                          m == 11 ? 'Noviembre' :
-                          'Diciembre'}">
+                              m == 2 ? 'Febrero' :
+                              m == 3 ? 'Marzo' :
+                              m == 4 ? 'Abril' :
+                              m == 5 ? 'Mayo' :
+                              m == 6 ? 'Junio' :
+                              m == 7 ? 'Julio' :
+                              m == 8 ? 'Agosto' :
+                              m == 9 ? 'Septiembre' :
+                              m == 10 ? 'Octubre' :
+                              m == 11 ? 'Noviembre' :
+                              'Diciembre'}">
                     </option>
+
                 </select>
             </div>
+
             <div class="col-md-2 align-self-end">
-                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                <button type="submit" class="btn btn-primary w-100">
+                    Filtrar
+                </button>
             </div>
+
         </form>
 
         <div class="row">
+
             <div class="col-md-3 mb-4">
                 <div class="card text-white bg-primary shadow-sm">
                     <div class="card-body">
@@ -50,6 +70,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3 mb-4">
                 <div class="card text-dark bg-warning shadow-sm">
                     <div class="card-body">
@@ -58,6 +79,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3 mb-4">
                 <div class="card text-white bg-success shadow-sm">
                     <div class="card-body">
@@ -66,6 +88,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3 mb-4">
                 <div class="card text-white bg-danger shadow-sm">
                     <div class="card-body">
@@ -74,18 +97,24 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="card shadow-sm">
             <div class="card-body">
                 <h5>Ingresos por citas atendidas</h5>
-                <h2 class="text-primary" th:text="'$ ' + ${stats.ingresosMes}"></h2>
+
+                <h2 class="text-primary" th:text="'$ ' + ${stats.ingresosMes}">
+                </h2>
             </div>
         </div>
+
     </div>
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
+
     <div th:replace="~{fragments/footer :: scripts}"></div>
+
 </body>
 
 </html>

@@ -1,28 +1,327 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layouts/auth :: head('Registrarse - Dr. Wilson Montenegro')}"></head>
+<head th:replace="~{layouts/auth :: head('Registrarse - Dr. Wilson Montenegro')}">
+</head>
 
 <body>
-    <header th:replace="~{layouts/auth :: header('register')}"></header><br><br><br><br><br><br>
-    <main>
-        <div class="login-container">
-            <h2>Registrarse</h2>
-            <form method="post" th:action="@{/register}">
-    <input type="text" name="nombre" placeholder="Nombre" required>
-    <input type="text" name="apellido" placeholder="Apellido" required>
-    <input type="email" name="email" placeholder="Correo electrónico" required>
-    <input type="tel" name="telefono" placeholder="Celular" pattern="[0-9]{10}" maxlength="10"
-           title="El número debe tener exactamente 10 dígitos" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
-    <button type="submit">Registrarse</button>
-</form>
 
-            <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión aquí</a></p>
+<header th:replace="~{layouts/auth :: header('register')}"></header>
+
+<br><br><br><br><br><br>
+
+<main>
+
+    <div class="login-container">
+
+        <h2>Registrarse</h2>
+
+        <!-- ============================= -->
+        <!-- MENSAJE CORREO YA REGISTRADO -->
+        <!-- ============================= -->
+
+        <div
+            th:if="${error}"
+            class="form-alert form-alert-error"
+            role="alert"
+            th:text="${error}">
         </div>
-    </main>
-    <br><br><br><br><br><br>
-    <footer th:replace="~{layouts/auth :: footer}"></footer>
+
+
+        <form
+            method="post"
+            th:action="@{/register}"
+            th:object="${registro}"
+            id="registerForm">
+
+            <!-- NOMBRE -->
+
+            <input
+                type="text"
+                th:field="*{nombre}"
+                placeholder="Nombre"
+                required>
+
+
+            <!-- APELLIDO -->
+
+            <input
+                type="text"
+                th:field="*{apellido}"
+                placeholder="Apellido"
+                required>
+
+
+            <!-- ============================= -->
+            <!-- CORREO ELECTRÓNICO -->
+            <!-- ============================= -->
+
+            <div class="field-email">
+
+                <input
+                    type="email"
+                    th:field="*{email}"
+                    id="email"
+                    placeholder="Correo electrónico"
+                    required
+                    aria-describedby="emailError">
+
+                <small
+                    id="emailError"
+                    class="email-error"
+                    th:if="${emailError}"
+                    th:text="${emailError}">
+                </small>
+
+            </div>
+
+
+            <!-- CELULAR -->
+
+            <input
+                type="tel"
+                th:field="*{telefono}"
+                placeholder="Celular"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                title="El número debe tener exactamente 10 dígitos"
+                required>
+
+
+            <!-- CONTRASEÑA -->
+
+            <input
+                type="password"
+                th:field="*{password}"
+                placeholder="Contraseña"
+                required>
+
+
+            <!-- BOTÓN -->
+
+            <button type="submit">
+                Registrarse
+            </button>
+
+        </form>
+
+
+        <p>
+            ¿Ya tienes cuenta?
+            <a th:href="@{/login}">
+                Inicia sesión aquí
+            </a>
+        </p>
+
+    </div>
+
+</main>
+
+<br><br><br><br><br><br>
+
+<footer th:replace="~{layouts/auth :: footer}">
+</footer>
+
+
+<!-- ============================= -->
+<!-- ESTILOS -->
+<!-- ============================= -->
+
+<style>
+
+    .form-alert {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        margin: 0 0 18px 0;
+
+        padding: 12px 14px;
+
+        border-radius: 6px;
+
+        font-size: 14px;
+
+        line-height: 1.4;
+    }
+
+
+    /* ERROR */
+
+    .form-alert-error {
+
+        color: #842029;
+
+        background: #f8d7da;
+
+        border: 1px solid #f5c2c7;
+    }
+
+
+    /* ÉXITO */
+
+    .form-alert-success {
+
+        color: #0f5132;
+
+        background: #d1e7dd;
+
+        border: 1px solid #badbcc;
+    }
+
+
+    /* CAMPO CORREO */
+
+    .field-email {
+
+        width: 100%;
+    }
+
+
+    /* MENSAJE DE CORREO */
+
+    .email-error {
+
+        display: block;
+
+        margin: -6px 0 12px 4px;
+
+        color: #dc3545;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+    }
+
+
+    /* BORDE ROJO */
+
+    .field-email input.input-error {
+
+        border-color: #dc3545;
+    }
+
+</style>
+
+
+<!-- ============================= -->
+<!-- VALIDACIÓN DEL CORREO -->
+<!-- ============================= -->
+
+<script>
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const form =
+            document.getElementById('registerForm');
+
+        const email =
+            document.getElementById('email');
+
+        const emailError =
+            document.getElementById('emailError');
+
+
+        function validarCorreo() {
+
+            const valor =
+                email.value.trim();
+
+
+            const correoValido =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                .test(valor);
+
+
+            if (!correoValido) {
+
+                email.classList.add(
+                    'input-error'
+                );
+
+
+                email.setCustomValidity(
+                    '📧 Ingresa un correo electrónico válido para mantener segura tu cuenta.'
+                );
+
+
+                if (emailError) {
+
+                    emailError.textContent =
+                        '📧 Ingresa un correo electrónico válido para mantener segura tu cuenta.';
+
+                    emailError.style.display =
+                        'block';
+                }
+
+
+                return false;
+            }
+
+
+            email.classList.remove(
+                'input-error'
+            );
+
+
+            email.setCustomValidity('');
+
+
+            if (emailError) {
+
+                emailError.textContent = '';
+
+                emailError.style.display =
+                    'none';
+            }
+
+
+            return true;
+        }
+
+
+        // Validar mientras escribe
+
+        email.addEventListener(
+            'input',
+            validarCorreo
+        );
+
+
+        // Validar al salir del campo
+
+        email.addEventListener(
+            'blur',
+            validarCorreo
+        );
+
+
+        // Validar antes de enviar
+
+        form.addEventListener(
+            'submit',
+            function (event) {
+
+                if (!validarCorreo()) {
+
+                    event.preventDefault();
+
+                    email.reportValidity();
+
+                    email.focus();
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
 </body>
 
 </html>
