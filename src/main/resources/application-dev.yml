@@ -8,3 +8,7 @@ spring:
 app:
   jwt:
     cookie-secure: false
+  carga-masiva:
+    enabled: true
+    tamano-lote: 25
+    cantidad-clientes: 40

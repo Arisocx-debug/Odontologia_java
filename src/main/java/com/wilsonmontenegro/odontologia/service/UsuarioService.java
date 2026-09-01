@@ -4,10 +4,12 @@ import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
 import com.wilsonmontenegro.odontologia.model.Cliente;
 import com.wilsonmontenegro.odontologia.model.Usuario;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
 import com.wilsonmontenegro.odontologia.repository.CitaRepository;
 import com.wilsonmontenegro.odontologia.repository.ClienteRepository;
 import com.wilsonmontenegro.odontologia.repository.UsuarioRepository;
+import com.wilsonmontenegro.odontologia.util.AuthUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -131,5 +133,24 @@ public class UsuarioService {
 
         // Finalmente eliminar el usuario
         usuarioRepository.delete(usuario);
+    }
+
+    @Transactional
+    public Usuario toggleEstado(Long id) {
+        Usuario usuario = obtenerPorId(id);
+
+        Long idActual = AuthUtil.idUsuarioActual();
+        if (idActual != null && idActual.equals(id) && usuario.isActivo()) {
+            throw new BusinessException("No puedes desactivar tu propia cuenta.");
+        }
+
+        if (usuario.isActivo()
+                && usuario.getRol() == Rol.ADMINISTRADOR
+                && usuarioRepository.countActivosPorRol(Rol.ADMINISTRADOR, EstadoUsuario.ACTIVO) <= 1) {
+            throw new BusinessException("No se puede desactivar el unico administrador activo del sistema.");
+        }
+
+        usuario.setEstado(usuario.isActivo() ? EstadoUsuario.INACTIVO : EstadoUsuario.ACTIVO);
+        return usuarioRepository.save(usuario);
     }
 }

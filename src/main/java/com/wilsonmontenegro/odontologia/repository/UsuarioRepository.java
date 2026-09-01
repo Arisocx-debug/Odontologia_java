@@ -1,6 +1,7 @@
 package com.wilsonmontenegro.odontologia.repository;
 
 import com.wilsonmontenegro.odontologia.model.Usuario;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByEmail(String email);
 
     long countByRol(Rol rol);
+
+    @Query("""
+            SELECT COUNT(u) FROM Usuario u
+            WHERE u.rol = :rol AND (u.estado IS NULL OR u.estado = :estado)
+            """)
+    long countActivosPorRol(@Param("rol") Rol rol, @Param("estado") EstadoUsuario estado);
 
     @Query("""
             SELECT u FROM Usuario u

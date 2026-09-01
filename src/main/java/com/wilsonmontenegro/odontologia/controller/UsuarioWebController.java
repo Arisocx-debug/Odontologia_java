@@ -71,4 +71,15 @@ public class UsuarioWebController {
         }
         return "redirect:/admin/usuarios";
     }
+
+    @PatchMapping("/{id}/estado")
+    public String toggleEstado(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.toggleEstado(id);
+            redirectAttributes.addFlashAttribute("success", "Estado del usuario actualizado.");
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/usuarios";
+    }
 }

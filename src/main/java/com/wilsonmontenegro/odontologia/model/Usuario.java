@@ -1,6 +1,7 @@
 package com.wilsonmontenegro.odontologia.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
 import com.wilsonmontenegro.odontologia.model.converter.RolConverter;
 import jakarta.persistence.*;
@@ -45,16 +46,28 @@ public class Usuario {
     @Column(length = 20)
     private String telefono;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    @Builder.Default
+    private EstadoUsuario estado = EstadoUsuario.ACTIVO;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public boolean isActivo() {
+        return estado == null || estado == EstadoUsuario.ACTIVO;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.estado == null) {
+            this.estado = EstadoUsuario.ACTIVO;
+        }
     }
 
     @PreUpdate

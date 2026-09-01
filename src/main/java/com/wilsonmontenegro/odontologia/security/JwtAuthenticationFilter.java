@@ -52,6 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
 
+            if (!userDetails.isEnabled()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             GrantedAuthority authority = new org.springframework.security.core.authority.SimpleGrantedAuthority(
                     "ROLE_" + rol);
 

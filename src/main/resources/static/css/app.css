@@ -24,6 +24,24 @@ body {
     display: inline-block;
 }
 
+.table-actions .btn {
+    margin-left: 0.15rem;
+}
+
+.table-actions .btn-outline-warning {
+    color: #d97706;
+    border-color: #d97706;
+}
+
+.table-actions .btn-outline-warning:hover {
+    color: #fff;
+    background-color: #d97706;
+}
+
+.table-actions .btn-outline-success:hover {
+    color: #fff;
+}
+
 .badge-estado-pendiente {
     background-color: #ffc107;
     color: #212529;
