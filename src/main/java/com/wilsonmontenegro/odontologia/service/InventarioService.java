@@ -20,26 +20,26 @@ public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
 
-    // Mostrar solo activos
-public List<Inventario> listarTodos() {
-    return inventarioRepository.findAll();
-}
-
-
-    // Buscar solo activos
-    public List<Inventario> buscar(String texto) {
-    if (texto == null || texto.isBlank()) {
-        return listarTodos();
+    // Mostrar todos
+    public List<Inventario> listarTodos() {
+        return inventarioRepository.findAll();
     }
-    return inventarioRepository.buscar(texto.trim());
-}
 
+    // Buscar
+    public List<Inventario> buscar(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return listarTodos();
+        }
+        return inventarioRepository.buscar(texto.trim());
+    }
 
+    // Obtener por ID
     public Inventario obtenerPorId(Long id) {
         return inventarioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Producto de inventario no encontrado"));
     }
 
+    // Crear
     @Transactional
     public Inventario crear(Inventario datos) {
         validarDatos(datos);
@@ -48,6 +48,7 @@ public List<Inventario> listarTodos() {
         return inventarioRepository.save(datos);
     }
 
+    // Actualizar
     @Transactional
     public Inventario actualizar(Long id, Inventario datos) {
         Inventario item = obtenerPorId(id);
@@ -63,32 +64,32 @@ public List<Inventario> listarTodos() {
         return inventarioRepository.save(item);
     }
 
+    // Eliminar
     @Transactional
-public void eliminar(Long id) {
-    inventarioRepository.deleteById(id);
-}
-
-
-
-  @Transactional
-public Inventario toggleEstado(Long id) {
-    Inventario item = obtenerPorId(id);
-
-    // Validar que el producto tenga datos mínimos antes de activarlo
-    if (item.getEstado() == EstadoInventario.INACTIVO) {
-        validarDatos(item); // evita activar productos incompletos
+    public void eliminar(Long id) {
+        inventarioRepository.deleteById(id);
     }
 
-    item.setEstado(
-            item.getEstado() == EstadoInventario.ACTIVO
-                    ? EstadoInventario.INACTIVO
-                    : EstadoInventario.ACTIVO
-    );
+    // Activar / desactivar
+    @Transactional
+    public Inventario toggleEstado(Long id) {
+        Inventario item = obtenerPorId(id);
 
-    item.setUltimaActualizacion(LocalDateTime.now());
-    return inventarioRepository.save(item);
-}
+        if (item.getEstado() == EstadoInventario.INACTIVO) {
+            validarDatos(item);
+        }
 
+        item.setEstado(
+                item.getEstado() == EstadoInventario.ACTIVO
+                        ? EstadoInventario.INACTIVO
+                        : EstadoInventario.ACTIVO
+        );
+
+        item.setUltimaActualizacion(LocalDateTime.now());
+        return inventarioRepository.save(item);
+    }
+
+    // Descontar stock (uso interno)
     @Transactional
     public void descontarStock(Inventario item, int cantidad) {
         if (cantidad > item.getStock()) {
@@ -99,6 +100,7 @@ public Inventario toggleEstado(Long id) {
         inventarioRepository.save(item);
     }
 
+    // Validación
     private void validarDatos(Inventario datos) {
         if (datos.getStock() == null || datos.getStock() < 0) {
             throw new BusinessException("El stock no puede ser negativo.");
@@ -106,5 +108,29 @@ public Inventario toggleEstado(Long id) {
         if (datos.getPrecioUnitario() == null || datos.getPrecioUnitario().signum() <= 0) {
             throw new BusinessException("El precio unitario debe ser mayor que cero.");
         }
+    }
+
+    // 🔥 Método que usa el checkout
+    @Transactional
+    public void actualizarStock(Long idInventario, int cantidadVendida) {
+
+        Inventario producto = obtenerPorId(idInventario);
+
+        if (cantidadVendida > producto.getStock()) {
+            throw new BusinessException("No hay suficiente stock de " + producto.getNombre());
+        }
+
+        // Reducir stock
+        producto.setStock(producto.getStock() - cantidadVendida);
+
+        // Si tu tabla tiene campo "ventas", lo actualizas aquí
+        try {
+            producto.setVentas(producto.getVentas() + cantidadVendida);
+        } catch (Exception e) {
+            // Si no existe el campo ventas, no pasa nada
+        }
+
+        producto.setUltimaActualizacion(LocalDateTime.now());
+        inventarioRepository.save(producto);
     }
 }

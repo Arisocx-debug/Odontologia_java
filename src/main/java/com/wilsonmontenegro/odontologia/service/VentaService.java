@@ -1,22 +1,24 @@
 package com.wilsonmontenegro.odontologia.service;
 
-import com.wilsonmontenegro.odontologia.exception.BusinessException;
-import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
-import com.wilsonmontenegro.odontologia.model.Inventario;
-import com.wilsonmontenegro.odontologia.model.MovimientoStock;
-import com.wilsonmontenegro.odontologia.model.Venta;
-import com.wilsonmontenegro.odontologia.model.Usuario;
-import com.wilsonmontenegro.odontologia.model.enums.EstadoInventario;
-import com.wilsonmontenegro.odontologia.model.enums.TipoMovimiento;
-import com.wilsonmontenegro.odontologia.repository.InventarioRepository;
-import com.wilsonmontenegro.odontologia.repository.VentaRepository;
-import com.wilsonmontenegro.odontologia.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.wilsonmontenegro.odontologia.dto.VentaDTO;
+import com.wilsonmontenegro.odontologia.exception.BusinessException;
+import com.wilsonmontenegro.odontologia.exception.RecursoNoEncontradoException;
+import com.wilsonmontenegro.odontologia.model.Inventario;
+import com.wilsonmontenegro.odontologia.model.Usuario;
+import com.wilsonmontenegro.odontologia.model.Venta;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoInventario;
+import com.wilsonmontenegro.odontologia.model.enums.TipoMovimiento;
+import com.wilsonmontenegro.odontologia.repository.InventarioRepository;
+import com.wilsonmontenegro.odontologia.repository.UsuarioRepository;
+import com.wilsonmontenegro.odontologia.repository.VentaRepository;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Logica de negocio de Ventas. Equivalente a VentaController.php y ClienteVentaController.php
@@ -122,5 +124,10 @@ public class VentaService {
 
     public List<Venta> reporte() {
         return ventaRepository.findAllConProductoYComprador();
+    }
+
+    public void registrarVenta(VentaDTO venta) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'registrarVenta'");
     }
 }

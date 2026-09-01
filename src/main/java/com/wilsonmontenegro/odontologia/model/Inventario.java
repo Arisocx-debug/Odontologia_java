@@ -67,4 +67,14 @@ public class Inventario {
     @Column(nullable = false)
     @Builder.Default
     private EstadoInventario estado = EstadoInventario.ACTIVO;
+
+    public int getVentas() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVentas'");
+    }
+
+    public void setVentas(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVentas'");
+    }
 }
