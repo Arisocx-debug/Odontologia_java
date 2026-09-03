@@ -42,6 +42,17 @@ spring:
       filter:
         enabled: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
+
 # ── Configuracion JWT ──────────────────────────────────────────────
 app:
   jwt:
