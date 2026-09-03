@@ -6,14 +6,36 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Configuration
-public class WebConfig {
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer {
+
+    private final SesionActivaPublicoInterceptor sesionActivaPublicoInterceptor;
 
     @Value("${app.cors.allowed-origins:http://localhost:8080}")
     private List<String> allowedOrigins;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(sesionActivaPublicoInterceptor)
+                .addPathPatterns(
+                        "/",
+                        "/mision",
+                        "/vision",
+                        "/objetivos",
+                        "/servicios-publicos",
+                        "/servicios/publicos",
+                        "/login",
+                        "/register"
+                );
+    }
 
     /**
      * CORS abierto para el prefijo /api/**, pensado para el caso en que el frontend

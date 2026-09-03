@@ -72,6 +72,11 @@ public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
 
+            // El logout lo hace AuthWebController para borrar la cookie JWT.
+            // El LogoutFilter de Spring intercepta POST /logout y no llega al controlador
+            // (y con CSRF mal resuelto termina en 403).
+            .logout(logout -> logout.disable())
+
             .authenticationProvider(authenticationProvider())
 
             .exceptionHandling(ex -> ex
