@@ -68,6 +68,9 @@ app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080}
 
+  uploads:
+    productos-dir: ${PRODUCTOS_UPLOAD_DIR:uploads/productos}
+
   # Horario laboral permitido para agendar citas (igual que en el sistema original)
   horario:
     apertura: "06:00"

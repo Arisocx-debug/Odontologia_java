@@ -4,7 +4,6 @@ public class VentaDTO {
 
     private Long productoId;
     private int cantidad;
-    private double total;
 
     public Long getProductoId() {
         return productoId;
@@ -20,13 +19,5 @@ public class VentaDTO {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
     }
 }

@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Inventario;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
+import com.wilsonmontenegro.odontologia.service.ProductoImagenService;
 import com.wilsonmontenegro.odontologia.service.ProveedorService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,8 @@ import lombok.RequiredArgsConstructor;
 public class InventarioWebController {
 
     private final InventarioService inventarioService;
-    private final ProveedorService proveedorService; // ✅ inyectamos el servicio
+    private final ProveedorService proveedorService;
+    private final ProductoImagenService productoImagenService;
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String buscar, Model model) {
@@ -45,15 +48,23 @@ public class InventarioWebController {
                         @RequestParam BigDecimal precioUnitario,
                         @RequestParam(required = false) String nombreProveedor,
                         @RequestParam(required = false) String descripcion,
+                        @RequestParam(required = false) MultipartFile imagen,
                         RedirectAttributes redirectAttributes) {
 
-        Inventario datos = Inventario.builder()
-                .nombre(nombre).stock(stock).precioUnitario(precioUnitario)
-                .nombreProveedor(nombreProveedor).descripcion(descripcion)
-                .build();
+        try {
+            Inventario datos = Inventario.builder()
+                    .nombre(nombre).stock(stock).precioUnitario(precioUnitario)
+                    .nombreProveedor(nombreProveedor).descripcion(descripcion)
+                    .imagen(productoImagenService.guardar(imagen))
+                    .build();
 
-        inventarioService.crear(datos);
-        redirectAttributes.addFlashAttribute("success", "Producto agregado al inventario.");
+            inventarioService.crear(datos);
+            redirectAttributes.addFlashAttribute("success", "Producto agregado al inventario.");
+
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         return "redirect:/inventario";
     }
 
@@ -64,12 +75,14 @@ public class InventarioWebController {
                          @RequestParam BigDecimal precioUnitario,
                          @RequestParam(required = false) String nombreProveedor,
                          @RequestParam(required = false) String descripcion,
+                         @RequestParam(required = false) MultipartFile imagen,
                          RedirectAttributes redirectAttributes) {
 
         try {
             Inventario datos = Inventario.builder()
                     .nombre(nombre).stock(stock).precioUnitario(precioUnitario)
                     .nombreProveedor(nombreProveedor).descripcion(descripcion)
+                    .imagen(productoImagenService.guardar(imagen))
                     .build();
 
             inventarioService.actualizar(id, datos);

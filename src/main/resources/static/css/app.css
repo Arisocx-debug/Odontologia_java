@@ -77,7 +77,7 @@ body {
 }
 
 /* Solo controlar la columna de descripción, sin forzar toda la tabla */
-.table td:nth-child(3) {
+.table td:nth-child(4) {
     max-width: 220px;
     white-space: nowrap;
     overflow: hidden;
@@ -86,7 +86,7 @@ body {
 
 
 /* Permitir que la descripción se ajuste al contenido */
-.table td:nth-child(3) {
+.table td:nth-child(4) {
     white-space: normal;
     /* permite saltos de línea */
     word-wrap: break-word;
@@ -101,4 +101,26 @@ body {
     width: 45px;
     height: 45px;
     margin-right: 10px;
+}
+.producto-thumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+}
+
+.producto-thumb-lg {
+    width: 120px;
+    height: 120px;
+}
+
+.producto-card-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    background-color: #eef3f8;
 }

@@ -33,5 +33,9 @@ public class RegistroRequest {
         min = 6,
         message = "La contrasena debe tener al menos 6 caracteres"
     )
+    @Pattern(
+        regexp = "^(?=.*[A-Z])(?=(?:.*\\d){3,})(?=.*[^A-Za-z0-9]).+$",
+        message = "La contrasena debe incluir una mayuscula, al menos tres numeros y un caracter especial"
+    )
     private String password;
 }

@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const precio = button.getAttribute("data-precio");
         const proveedor = button.getAttribute("data-proveedor");
         const descripcion = button.getAttribute("data-descripcion");
+        const imagen = button.getAttribute("data-imagen");
 
         document.getElementById("idInventario").value = id;
         document.getElementById("nombre").value = nombre;
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("precioUnitario").value = precio;
         document.getElementById("nombreProveedor").value = proveedor;
         document.getElementById("descripcion").value = descripcion;
+        document.getElementById("imagenActual").src = imagen || "/img/producto-default.svg";
 
         // Acción correcta
         document.getElementById("formEditar").action = `/inventario/${id}`;

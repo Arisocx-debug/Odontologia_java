@@ -15,14 +15,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import com.wilsonmontenegro.odontologia.security.GoogleOAuth2User;
 import com.wilsonmontenegro.odontologia.security.GoogleOAuth2UserService;
 import com.wilsonmontenegro.odontologia.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -47,11 +47,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 🔥 Filtro necesario para DELETE/PUT/PATCH en formularios HTML
+    // Filtro necesario para DELETE/PUT/PATCH en formularios HTML
     @Bean
     public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
         return new HiddenHttpMethodFilter();
@@ -63,17 +64,17 @@ public class SecurityConfig {
         http
                 // CSRF para formularios Thymeleaf
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/**") // API sin CSRF
+                        .csrfTokenRepository(
+                                CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/**")
                 )
 
                 // Sesiones SOLO para vistas Thymeleaf
                 .sessionManagement(sm -> sm
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                        .sessionCreationPolicy(
+                                SessionCreationPolicy.IF_REQUIRED))
 
-                // El logout lo hace AuthWebController para borrar la cookie JWT.
-                // El LogoutFilter de Spring intercepta POST /logout y no llega al controlador
-                // (y con CSRF mal resuelto termina en 403).
+                // El logout lo hace AuthWebController
                 .logout(logout -> logout.disable())
 
                 .exceptionHandling(ex -> ex
@@ -84,10 +85,26 @@ public class SecurityConfig {
 
                         // Público
                         .requestMatchers(
-                                "/", "/mision", "/vision", "/objetivos", "/servicios-publicos", "/servicios/publicos",
-                                "/login", "/register", "/logout", "/error/**",
-                                "/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico",
-                                "/api/auth/**", "/oauth2/**", "/login/oauth2/**")
+                                "/",
+                                "/mision",
+                                "/vision",
+                                "/objetivos",
+                                "/servicios-publicos",
+                                "/servicios/publicos",
+                                "/login",
+                                "/register",
+                                "/logout",
+                                "/error/**",
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/uploads/**",
+                                "/webjars/**",
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**"
+                        )
                         .permitAll()
 
                         // INVENTARIO
@@ -120,16 +137,20 @@ public class SecurityConfig {
                         .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
                         // API con JWT
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/**")
+                        .authenticated()
 
-                        .anyRequest().authenticated())
+                        .anyRequest()
+                        .authenticated()
+                )
 
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(googleOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
 
-                            GoogleOAuth2User principal = (GoogleOAuth2User) authentication.getPrincipal();
+                            GoogleOAuth2User principal =
+                                    (GoogleOAuth2User) authentication.getPrincipal();
 
                             switch (principal.getUsuario().getRol()) {
 

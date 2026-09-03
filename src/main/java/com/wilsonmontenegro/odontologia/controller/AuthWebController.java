@@ -120,6 +120,14 @@ public class AuthWebController {
                 );
             }
 
+            if (result.hasFieldErrors("password")) {
+
+                model.addAttribute(
+                        "passwordError",
+                        "La contrasena debe incluir una mayuscula, al menos tres numeros y un caracter especial."
+                );
+            }
+
             return "auth/register";
         }
 

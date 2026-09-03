@@ -96,6 +96,11 @@
                 placeholder="Contraseña"
                 required>
 
+            <small
+                class="email-error"
+                th:if="${#fields.hasErrors('password')}"
+                th:errors="*{password}"></small>
+
 
             <!-- BOTÓN -->
 
