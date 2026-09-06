@@ -3,6 +3,7 @@ package com.wilsonmontenegro.odontologia.controller;
 import com.wilsonmontenegro.odontologia.model.enums.EstadoCita;
 import com.wilsonmontenegro.odontologia.service.CitaService;
 import com.wilsonmontenegro.odontologia.util.AuthUtil;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,16 @@ public class ClienteHistorialCitaController {
             @RequestParam(required = false) String fechaHasta,
             @RequestParam(required = false) EstadoCita estado,
             @RequestParam(required = false, defaultValue = "") String search,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (search != null && search.matches(".*\\d.*")) {
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Solo se puede buscar por servicio.");
+
+            return "redirect:/cliente/historial-citas";
+        }
 
         Long usuarioId = AuthUtil.idUsuarioActual();
 

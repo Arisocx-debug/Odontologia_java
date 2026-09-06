@@ -3,6 +3,7 @@ package com.wilsonmontenegro.odontologia.controller;
 import com.wilsonmontenegro.odontologia.model.enums.EstadoCita;
 import com.wilsonmontenegro.odontologia.service.CitaService;
 import com.wilsonmontenegro.odontologia.service.ClienteConsultaService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,37 +18,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class AdminHistorialCitaController {
 
-    private final CitaService citaService;
-    private final ClienteConsultaService clienteConsultaService;
+        private final CitaService citaService;
+        private final ClienteConsultaService clienteConsultaService;
 
-    @GetMapping
-    public String index(
-            @RequestParam(required = false) Long clienteId,
-            @RequestParam(required = false) String fechaDesde,
-            @RequestParam(required = false) String fechaHasta,
-            @RequestParam(required = false) EstadoCita estado,
-            @RequestParam(required = false, defaultValue = "") String search,
-            Model model) {
+        @GetMapping
+        public String index(
+                        @RequestParam(required = false) Long clienteId,
+                        @RequestParam(required = false) String fechaDesde,
+                        @RequestParam(required = false) String fechaHasta,
+                        @RequestParam(required = false) EstadoCita estado,
+                        @RequestParam(required = false, defaultValue = "") String search,
+                        Model model,
+                        RedirectAttributes redirectAttributes) {
 
-        model.addAttribute(
-                "citas",
-                citaService.buscarHistorial(
-                        clienteId,
-                        fechaDesde,
-                        fechaHasta,
-                        estado,
-                        search));
+                if (search != null && search.matches(".*\\d.*")) {
+                        redirectAttributes.addFlashAttribute(
+                                        "error",
+                                        "Solo se puede buscar por nombre, estado o servicio.");
 
-        model.addAttribute(
-                "clientes",
-                clienteConsultaService.listarClientesConUsuario());
+                        return "redirect:/admin/historial-citas";
+                }
 
-        model.addAttribute("clienteId", clienteId);
-        model.addAttribute("fechaDesde", fechaDesde);
-        model.addAttribute("fechaHasta", fechaHasta);
-        model.addAttribute("estado", estado);
-        model.addAttribute("search", search);
+                model.addAttribute(
+                                "citas",
+                                citaService.buscarHistorial(
+                                                clienteId,
+                                                fechaDesde,
+                                                fechaHasta,
+                                                estado,
+                                                search));
 
-        return "admin/historial-citas";
-    }
+                model.addAttribute(
+                                "clientes",
+                                clienteConsultaService.listarClientesConUsuario());
+
+                model.addAttribute("clienteId", clienteId);
+                model.addAttribute("fechaDesde", fechaDesde);
+                model.addAttribute("fechaHasta", fechaHasta);
+                model.addAttribute("estado", estado);
+                model.addAttribute("search", search);
+
+                return "admin/historial-citas";
+        }
 }

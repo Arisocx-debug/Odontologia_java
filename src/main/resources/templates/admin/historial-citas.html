@@ -204,19 +204,14 @@
 
                         <td class="text-end table-actions">
 
-                            <a th:href="@{'/empleado/citas/' +
-                            ${cita.idCita} + '/pdf'}" target="_blank" class="btn btn-sm btn-outline-danger"
-                                title="PDF">
-
+                            <a th:href="@{'/admin/citas/pdf/' + ${cita.idCita}}" target="_blank"
+                                class="btn btn-sm btn-outline-danger" title="PDF">
                                 <i class="fa-solid fa-file-pdf"></i>
-
                             </a>
 
-                            <a th:href="@{'/admin/citas/' +
-                            ${cita.idCita} + '/excel'}" class="btn btn-sm btn-outline-success" title="Excel">
-
+                            <a th:href="@{'/admin/citas/' + ${cita.idCita} + '/excel'}"
+                                class="btn btn-sm btn-outline-success" title="Excel">
                                 <i class="fa-solid fa-file-excel"></i>
-
                             </a>
 
                         </td>
