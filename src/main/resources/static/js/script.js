@@ -53,7 +53,7 @@ function saveCart(cart) {
 // AGREGAR PRODUCTO AL CARRITO
 // ============================================================
 
-function addToCart(product) {
+function addToCart(product, button) {
 
     const cart = getCart();
 
@@ -157,7 +157,8 @@ function addToCart(product) {
 
 
     showToast(
-        `${product.name} agregado al carrito`
+        `${product.name} agregado al carrito`,
+        button
     );
 }
 
@@ -166,15 +167,25 @@ function addToCart(product) {
 // TOAST
 // ============================================================
 
-function showToast(message) {
+function showToast(message, button) {
 
     const toast = document.createElement('div');
 
     toast.textContent = message;
 
-    toast.className = 'toast-message';
+    toast.className = 'toast-message-card';
 
-    document.body.appendChild(toast);
+    if (button) {
+        const card = button.closest('.card');
+        if (card) {
+            card.style.position = 'relative';
+            card.insertBefore(toast, card.firstChild);
+        } else {
+            document.body.appendChild(toast);
+        }
+    } else {
+        document.body.appendChild(toast);
+    }
 
 
     setTimeout(() => {
@@ -589,7 +600,7 @@ document.addEventListener(
                     };
 
 
-                    addToCart(product);
+                    addToCart(product, button);
 
                 }
             );

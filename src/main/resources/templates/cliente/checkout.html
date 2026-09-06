@@ -258,6 +258,43 @@
 
 <script>
 
+/*
+ * ==========================================================
+ * MENSAJE DE COMPRA EXITOSA CON DIRECCIÓN
+ * ==========================================================
+ */
+
+function mostrarMensajeExito() {
+
+    const mensaje = document.createElement('div');
+
+    mensaje.id = 'mensajeExito';
+
+    mensaje.innerHTML = `
+        <div class="mensaje-exito-contenido">
+            <div class="mensaje-exito-icono">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="mensaje-exito-titulo">
+                ¡Compra realizada correctamente!
+            </h3>
+            <div class="mensaje-exito-direccion">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Ve hasta el consultorio en la dirección:</span>
+                <strong>Dg. 84 #79 - 36, Engativá, Bogotá</strong>
+            </div>
+            <p class="mensaje-exito-nota">
+                <i class="fa-solid fa-clock"></i>
+                Te esperamos en horario de atención.
+            </p>
+        </div>
+    `;
+
+    document.body.insertBefore(mensaje, document.body.firstChild);
+
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const form = document.getElementById('checkoutForm');
@@ -549,9 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('cart');
 
 
-            showToast(
-                '✅ Compra realizada correctamente.'
-            );
+            mostrarMensajeExito();
 
 
             /*
@@ -564,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href =
                     '/cliente/inventario';
 
-            }, 1500);
+            }, 3000);
 
 
         } catch (error) {
