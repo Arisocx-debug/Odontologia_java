@@ -102,6 +102,7 @@ body {
     height: 45px;
     margin-right: 10px;
 }
+
 .producto-thumb {
     width: 64px;
     height: 64px;
@@ -123,4 +124,21 @@ body {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
     background-color: #eef3f8;
+}
+
+/* Enlaces normales del navbar */
+.navbar .nav-link {
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* Efecto al pasar el mouse y Página actual */
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff !important;
 }

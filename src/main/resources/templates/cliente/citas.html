@@ -51,12 +51,15 @@
                                 class="btn btn-sm btn-outline-success" title="Excel">
                                 <i class="fa-solid fa-file-excel"></i>
                             </a>
-                            <form th:if="${cita.estado.name() == 'PENDIENTE'}"
+                            <form th:if="${cita.estado.name() == 'PENDIENTE' or cita.estado.name() == 'CONFIRMADA'}"
                                 th:action="@{'/cliente/citas/' + ${cita.idCita}}" method="post" class="d-inline"
-                                onsubmit="return confirm('Cancelar esta cita?');">
+                                onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta cita?');">
+
                                 <input type="hidden" name="_method" value="delete">
-                                <button type="submit" class="btn btn-sm btn-outline-dark" title="Cancelar"><i
-                                        class="fa-solid fa-xmark"></i></button>
+
+                                <button type="submit" class="btn btn-sm btn-outline-dark" title="Cancelar">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>

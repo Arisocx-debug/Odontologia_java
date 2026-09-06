@@ -3,6 +3,7 @@ package com.wilsonmontenegro.odontologia.security;
 import com.wilsonmontenegro.odontologia.model.Usuario;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
 import com.wilsonmontenegro.odontologia.repository.UsuarioRepository;
+import com.wilsonmontenegro.odontologia.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,47 +19,52 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class GoogleOAuth2UserService
-        implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+                implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
+        private final UsuarioRepository usuarioRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final EmailService emailService;
 
-    private final DefaultOAuth2UserService delegate =
-            new DefaultOAuth2UserService();
+        private final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        @Override
+        public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 
-        OAuth2User oauth2User = delegate.loadUser(userRequest);
+                OAuth2User oauth2User = delegate.loadUser(userRequest);
 
-        String email = oauth2User.getAttribute("email");
-        String name = oauth2User.getAttribute("name");
+                String email = oauth2User.getAttribute("email");
+                String name = oauth2User.getAttribute("name");
 
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Google no proporcionó un correo electrónico");
+                if (email == null || email.isBlank()) {
+                        throw new IllegalArgumentException(
+                                        "Google no proporcionó un correo electrónico");
+                }
+
+                Usuario usuario = usuarioRepository.findByEmail(email)
+                                .orElseGet(() -> {
+
+                                        Usuario nuevoUsuario = Usuario.builder()
+                                                        .name(name != null ? name : "Usuario Google")
+                                                        .email(email)
+                                                        .password(
+                                                                        passwordEncoder.encode(
+                                                                                        UUID.randomUUID().toString()))
+                                                        .rol(Rol.CLIENTE)
+                                                        .build();
+
+                                        Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+
+                                        // Enviar correo solamente cuando se crea
+                                        // una cuenta nueva con Google
+                                        emailService.enviarBienvenida(
+                                                        usuarioGuardado.getEmail(),
+                                                        usuarioGuardado.getName());
+
+                                        return usuarioGuardado;
+                                });
+
+                return new GoogleOAuth2User(
+                                oauth2User,
+                                usuario);
         }
-
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseGet(() -> {
-
-                    Usuario nuevoUsuario = Usuario.builder()
-                            .name(name != null ? name : "Usuario Google")
-                            .email(email)
-                            .password(
-                                    passwordEncoder.encode(
-                                            UUID.randomUUID().toString()
-                                    )
-                            )
-                            .rol(Rol.CLIENTE)
-                            .build();
-
-                    return usuarioRepository.save(nuevoUsuario);
-                });
-
-        return new GoogleOAuth2User(
-                oauth2User,
-                usuario
-        );
-    }
 }
