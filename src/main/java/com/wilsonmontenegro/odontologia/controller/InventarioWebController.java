@@ -35,21 +35,33 @@ public class InventarioWebController {
     private final ProductoImagenService productoImagenService;
 
     @GetMapping
-    public String index(@RequestParam(required = false, defaultValue = "") String buscar, Model model) {
+    public String index(@RequestParam(required = false, defaultValue = "") String buscar,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (!buscar.trim().isEmpty() && buscar.trim().matches("\\d+")) {
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Solo se puede buscar por nombre, estado o proveedor.");
+
+            return "redirect:/inventario";
+        }
+
         model.addAttribute("items", inventarioService.buscar(buscar));
         model.addAttribute("buscar", buscar);
-        model.addAttribute("proveedores", proveedorService.listarTodos()); // ✅ usamos la instancia
+        model.addAttribute("proveedores", proveedorService.listarTodos());
+
         return "inventario/index";
     }
 
     @PostMapping
     public String store(@RequestParam String nombre,
-                        @RequestParam Integer stock,
-                        @RequestParam BigDecimal precioUnitario,
-                        @RequestParam(required = false) String nombreProveedor,
-                        @RequestParam(required = false) String descripcion,
-                        @RequestParam(required = false) MultipartFile imagen,
-                        RedirectAttributes redirectAttributes) {
+            @RequestParam Integer stock,
+            @RequestParam BigDecimal precioUnitario,
+            @RequestParam(required = false) String nombreProveedor,
+            @RequestParam(required = false) String descripcion,
+            @RequestParam(required = false) MultipartFile imagen,
+            RedirectAttributes redirectAttributes) {
 
         try {
             Inventario datos = Inventario.builder()
@@ -70,13 +82,13 @@ public class InventarioWebController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @RequestParam String nombre,
-                         @RequestParam Integer stock,
-                         @RequestParam BigDecimal precioUnitario,
-                         @RequestParam(required = false) String nombreProveedor,
-                         @RequestParam(required = false) String descripcion,
-                         @RequestParam(required = false) MultipartFile imagen,
-                         RedirectAttributes redirectAttributes) {
+            @RequestParam String nombre,
+            @RequestParam Integer stock,
+            @RequestParam BigDecimal precioUnitario,
+            @RequestParam(required = false) String nombreProveedor,
+            @RequestParam(required = false) String descripcion,
+            @RequestParam(required = false) MultipartFile imagen,
+            RedirectAttributes redirectAttributes) {
 
         try {
             Inventario datos = Inventario.builder()
@@ -118,6 +130,3 @@ public class InventarioWebController {
         return "redirect:/inventario";
     }
 }
-
-
-

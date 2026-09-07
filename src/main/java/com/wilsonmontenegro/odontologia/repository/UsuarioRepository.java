@@ -12,25 +12,25 @@ import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    Optional<Usuario> findByEmail(String email);
+        Optional<Usuario> findByEmail(String email);
 
-    boolean existsByEmail(String email);
+        boolean existsByEmail(String email);
 
-    long countByRol(Rol rol);
+        long countByRol(Rol rol);
 
-    @Query("""
-            SELECT COUNT(u) FROM Usuario u
-            WHERE u.rol = :rol AND (u.estado IS NULL OR u.estado = :estado)
-            """)
-    long countActivosPorRol(@Param("rol") Rol rol, @Param("estado") EstadoUsuario estado);
+        @Query("""
+                        SELECT COUNT(u) FROM Usuario u
+                        WHERE u.rol = :rol AND (u.estado IS NULL OR u.estado = :estado)
+                        """)
+        long countActivosPorRol(@Param("rol") Rol rol, @Param("estado") EstadoUsuario estado);
 
-    @Query("""
-            SELECT u FROM Usuario u
-            WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%'))
-               OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))
-               OR u.telefono LIKE CONCAT('%', :search, '%')
-               OR LOWER(CAST(u.rol AS string)) LIKE LOWER(CONCAT('%', :search, '%'))
-            ORDER BY u.id DESC
-            """)
-    List<Usuario> buscar(@Param("search") String search);
+        @Query("""
+                        SELECT u FROM Usuario u
+                        WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                           OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))
+                           OR u.telefono LIKE CONCAT('%', :search, '%')
+                           OR LOWER(CAST(u.rol AS string)) LIKE LOWER(CONCAT('%', :search, '%'))
+                        ORDER BY u.id DESC
+                        """)
+        List<Usuario> buscar(@Param("search") String search);
 }

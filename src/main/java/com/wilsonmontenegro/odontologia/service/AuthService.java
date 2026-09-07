@@ -16,13 +16,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.wilsonmontenegro.odontologia.service.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Logica de autenticacion. Equivalente a AuthController.php.
  * En Laravel el login guardaba datos en session(); aqui se genera un JWT
- * y se calcula la URL de redireccion segun el rol, igual que el `match($users->rol)` original.
+ * y se calcula la URL de redireccion segun el rol, igual que el
+ * `match($users->rol)` original.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,12 +35,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     public AuthResponse login(LoginRequest request) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (DisabledException e) {
             throw new BadCredentialsException("Esta cuenta esta desactivada.");
         } catch (Exception e) {
@@ -49,8 +51,7 @@ public class AuthService {
                 .orElseThrow(() -> new BadCredentialsException("Credenciales invalidas"));
 
         String token = jwtTokenProvider.generarToken(
-                usuario.getId(), usuario.getEmail(), usuario.getRol().name(), usuario.getName()
-        );
+                usuario.getId(), usuario.getEmail(), usuario.getRol().name(), usuario.getName());
 
         return AuthResponse.builder()
                 .token(token)
@@ -81,11 +82,16 @@ public class AuthService {
         Cliente cliente = Cliente.builder()
                 .usuario(usuario)
                 .build();
+
         clienteRepository.save(cliente);
 
+        // Enviar correo de bienvenida
+        emailService.enviarBienvenida(
+                usuario.getEmail(),
+                usuario.getName());
+
         String token = jwtTokenProvider.generarToken(
-                usuario.getId(), usuario.getEmail(), usuario.getRol().name(), usuario.getName()
-        );
+                usuario.getId(), usuario.getEmail(), usuario.getRol().name(), usuario.getName());
 
         return AuthResponse.builder()
                 .token(token)

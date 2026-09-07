@@ -20,6 +20,11 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
 }
 
+
+/* =========================================================
+   ACCIONES DE LAS TABLAS
+   ========================================================= */
+
 .table-actions form {
     display: inline-block;
 }
@@ -42,6 +47,11 @@ body {
     color: #fff;
 }
 
+
+/* =========================================================
+   ESTADOS DE CITAS
+   ========================================================= */
+
 .badge-estado-pendiente {
     background-color: #ffc107;
     color: #212529;
@@ -60,13 +70,22 @@ body {
     background-color: #dc3545;
 }
 
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
 .auth-card {
     max-width: 450px;
     margin: 60px auto;
 }
 
+
+/* =========================================================
+   TABLAS GENERALES
+   ========================================================= */
+
 .table {
-    table-layout: fixed;
     width: 100%;
 }
 
@@ -76,24 +95,141 @@ body {
     vertical-align: middle;
 }
 
-/* Solo controlar la columna de descripción, sin forzar toda la tabla */
-.table td:nth-child(4) {
-    max-width: 220px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+/* =========================================================
+   TABLA DE USUARIOS
+   ========================================================= */
+
+.tabla-usuarios {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
 }
 
 
-/* Permitir que la descripción se ajuste al contenido */
+/* Ancho de cada columna */
+
+.tabla-usuarios th:nth-child(1),
+.tabla-usuarios td:nth-child(1) {
+    width: 4%;
+}
+
+.tabla-usuarios th:nth-child(2),
+.tabla-usuarios td:nth-child(2) {
+    width: 18%;
+}
+
+.tabla-usuarios th:nth-child(3),
+.tabla-usuarios td:nth-child(3) {
+    width: 25%;
+}
+
+.tabla-usuarios th:nth-child(4),
+.tabla-usuarios td:nth-child(4) {
+    width: 14%;
+}
+
+.tabla-usuarios th:nth-child(5),
+.tabla-usuarios td:nth-child(5) {
+    width: 12%;
+}
+
+.tabla-usuarios th:nth-child(6),
+.tabla-usuarios td:nth-child(6) {
+    width: 11%;
+}
+
+.tabla-usuarios th:nth-child(7),
+.tabla-usuarios td:nth-child(7) {
+    width: 16%;
+}
+
+
+/* Celdas de la tabla */
+
+.tabla-usuarios th,
+.tabla-usuarios td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* Nombre */
+
+.tabla-usuarios td:nth-child(2) {
+    white-space: normal;
+}
+
+
+/* Correo */
+
+.tabla-usuarios td:nth-child(3) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* Teléfono */
+
+.tabla-usuarios td:nth-child(4) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+
+/* Rol y estado */
+
+.tabla-usuarios td:nth-child(5),
+.tabla-usuarios td:nth-child(6) {
+    white-space: nowrap;
+}
+
+
+/* Badges */
+
+.tabla-usuarios .badge {
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+
+/* Acciones */
+
+.tabla-usuarios td:last-child {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.tabla-usuarios .table-actions {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   RESPONSIVE PARA LA TABLA
+   ========================================================= */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+/* =========================================================
+   DESCRIPCIONES DE OTRAS TABLAS
+   ========================================================= */
+
 .table td:nth-child(4) {
     white-space: normal;
-    /* permite saltos de línea */
     word-wrap: break-word;
-    /* corta palabras largas si es necesario */
-    max-width: none;
-    /* elimina el límite de ancho */
 }
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
 
 .logo {
     border-radius: 50%;
@@ -102,6 +238,11 @@ body {
     height: 45px;
     margin-right: 10px;
 }
+
+
+/* =========================================================
+   IMÁGENES DE PRODUCTOS
+   ========================================================= */
 
 .producto-thumb {
     width: 64px;
@@ -126,7 +267,11 @@ body {
     background-color: #eef3f8;
 }
 
-/* Enlaces normales del navbar */
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
 .navbar .nav-link {
     color: #ffffff;
     padding: 8px 12px;
@@ -136,9 +281,25 @@ body {
         color 0.2s ease;
 }
 
-/* Efecto al pasar el mouse y Página actual */
 .navbar .nav-link:hover,
 .navbar .nav-link.active {
     background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .tabla-usuarios {
+        min-width: 850px;
+    }
+
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+        padding: 0.65rem 0.5rem;
+    }
 }
