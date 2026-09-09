@@ -1,6 +1,9 @@
 package com.wilsonmontenegro.odontologia.dto.request;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -15,14 +18,24 @@ public class RegistroRequest {
     private String apellido;
 
     @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "El correo no es valido")
+    @Email(message = "📧 Ingresa un correo electrónico válido para mantener segura tu cuenta.")
     private String email;
 
     @NotBlank(message = "El telefono es obligatorio")
-    @Pattern(regexp = "^[0-9]{10}$", message = "El numero de telefono debe tener exactamente 10 digitos")
+    @Pattern(
+        regexp = "^[0-9]{10}$",
+        message = "El numero de telefono debe tener exactamente 10 digitos"
+    )
     private String telefono;
 
     @NotBlank(message = "La contrasena es obligatoria")
-    @Size(min = 6, message = "La contrasena debe tener al menos 6 caracteres")
+    @Size(
+        min = 6,
+        message = "La contrasena debe tener al menos 6 caracteres"
+    )
+    @Pattern(
+        regexp = "^(?=.*[A-Z])(?=(?:.*\\d){3,})(?=.*[^A-Za-z0-9]).+$",
+        message = "La contrasena debe incluir una mayuscula, al menos tres numeros y un caracter especial"
+    )
     private String password;
 }

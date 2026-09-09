@@ -20,7 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 
 /**
- * CRUD completo de citas para el rol Administrador. Equivalente a AdminCitaController.php.
+ * CRUD completo de citas para el rol Administrador. Equivalente a
+ * AdminCitaController.php.
  */
 @Controller
 @RequestMapping("/admin/citas")
@@ -34,25 +35,70 @@ public class AdminCitaWebController {
     private final ExcelService excelService;
 
     @GetMapping
-    public String index(@RequestParam(required = false, defaultValue = "") String search, Model model) {
+    public String index(
+            @RequestParam(required = false, defaultValue = "") String search,
+            Model model) {
+
         try {
-            model.addAttribute("citas", citaService.buscar(search));
+
+            if (search == null || search.isBlank()) {
+
+                model.addAttribute(
+                        "citas",
+                        citaService.listarCitasActivas());
+
+            } else {
+
+                // La búsqueda normal también debe respetar las citas activas.
+                model.addAttribute(
+                        "citas",
+                        citaService.buscar(search)
+                                .stream()
+                                .filter(cita -> {
+
+                                    if (cita.getEstado() == EstadoCita.PENDIENTE
+                                            || cita.getEstado() == EstadoCita.CONFIRMADA) {
+                                        return true;
+                                    }
+
+                                    if (cita.getFechaEntrada() == null) {
+                                        return false;
+                                    }
+
+                                    return cita.getFechaEntrada()
+                                            .isAfter(LocalDateTime.now().minusDays(2));
+                                })
+                                .toList());
+            }
+
         } catch (BusinessException e) {
+
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("citas", citaService.listarTodas());
+
+            model.addAttribute(
+                    "citas",
+                    citaService.listarCitasActivas());
         }
+
         model.addAttribute("search", search);
-        model.addAttribute("clientes", clienteConsultaService.listarClientesConUsuario());
-        model.addAttribute("servicios", servicioService.listarTodos());
+
+        model.addAttribute(
+                "clientes",
+                clienteConsultaService.listarClientesConUsuario());
+
+        model.addAttribute(
+                "servicios",
+                servicioService.listarTodos());
+
         return "admin/citas";
     }
 
     @PostMapping
     public String store(@RequestParam LocalDateTime fechaEntrada,
-                         @RequestParam Long idservicio,
-                         @RequestParam Long idcliente,
-                         @RequestParam EstadoCita estado,
-                         RedirectAttributes redirectAttributes) {
+            @RequestParam Long idservicio,
+            @RequestParam Long idcliente,
+            @RequestParam EstadoCita estado,
+            RedirectAttributes redirectAttributes) {
         try {
             citaService.agendar(fechaEntrada, idservicio, idcliente, estado);
             redirectAttributes.addFlashAttribute("success", "Cita agendada correctamente.");
@@ -74,11 +120,11 @@ public class AdminCitaWebController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id,
-                          @RequestParam LocalDateTime fechaEntrada,
-                          @RequestParam Long idservicio,
-                          @RequestParam Long idcliente,
-                          @RequestParam EstadoCita estado,
-                          RedirectAttributes redirectAttributes) {
+            @RequestParam LocalDateTime fechaEntrada,
+            @RequestParam Long idservicio,
+            @RequestParam Long idcliente,
+            @RequestParam EstadoCita estado,
+            RedirectAttributes redirectAttributes) {
         try {
             citaService.actualizar(id, fechaEntrada, idservicio, idcliente, estado);
             redirectAttributes.addFlashAttribute("success", "Cita actualizada correctamente.");
@@ -110,7 +156,8 @@ public class AdminCitaWebController {
         Cita cita = citaService.obtenerPorId(id);
         byte[] excel = excelService.generarExcelFactura(cita);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentType(
+                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factura_" + id + ".xlsx")
                 .body(excel);
     }

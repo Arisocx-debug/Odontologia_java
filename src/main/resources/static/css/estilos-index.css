@@ -1,30 +1,41 @@
-/* Reset */
+/* =========================================================
+   RESET
+========================================================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Fondo general */
+
+/* =========================================================
+   GENERAL
+========================================================= */
 body {
-    background: linear-gradient(135deg, #007BFF 40%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #1a1a1a;
+    background-color: #f4f7fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #212529;
     line-height: 1.6;
 }
 
-/* Contenedor */
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 .container {
-    max-width: 1200px;
+    max-width: 1110px;
     margin: 0 auto;
     padding: 0 15px;
 }
 
-/* HEADER */
+
+/* =========================================================
+   HEADER
+========================================================= */
 .back {
-    background-color: #0a0b61;
-    padding: 15px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    background-color: #0d6efd;
+    padding: 12px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
 }
 
 .menu {
@@ -32,40 +43,58 @@ body {
     align-items: center;
     justify-content: space-between;
     position: relative;
+    min-height: 46px;
 }
 
+
+/* Logo */
 .logo {
     border-radius: 50%;
     border: 2px solid #ffffff;
 }
 
-/* NAVBAR */
+
+/* =========================================================
+   NAVBAR
+========================================================= */
 .menu .navbar ul {
     display: flex;
-    gap: 15px;
+    align-items: center;
+    gap: 3px;
     list-style: none;
 }
 
 .menu .navbar ul li a {
+    display: block;
+
     color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 8px 12px;
+
+    border-radius: 4px;
+
     text-decoration: none;
-    transition: all 0.3s ease;
+    font-size: 15px;
+
+    transition: background-color 0.2s ease,
+                color 0.2s ease;
 }
 
-.menu .navbar ul li a:hover {
-    background-color: #ffffff;
-    color: #0a0b61;
+.menu .navbar ul li a:hover,
+.menu .navbar ul li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
 }
 
-/* Responsive */
+
+/* =========================================================
+   MENÚ RESPONSIVE
+========================================================= */
 #menu {
     display: none;
 }
 
 .menu-icono {
-    width: 30px;
+    width: 28px;
     filter: brightness(0) invert(1);
 }
 
@@ -74,155 +103,308 @@ body {
     display: none;
 }
 
-@media(max-width:991px) {
+
+/* =========================================================
+   TÍTULOS
+========================================================= */
+.title3 {
+    max-width: 1110px;
+    margin: 30px auto 20px;
+
+    padding: 0 15px;
+
+    color: #212529;
+
+    font-size: 28px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TEXTO
+========================================================= */
+.text4 {
+    max-width: 800px;
+
+    margin: 15px auto;
+    padding: 15px 20px;
+
+    color: #495057;
+
+    text-align: center;
+    font-size: 17px;
+    line-height: 1.7;
+
+    background-color: #ffffff;
+
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
+   IMAGEN DE LA CLÍNICA
+========================================================= */
+.clinica {
+    display: block;
+
+    max-width: 600px;
+    width: 100%;
+
+    margin: 25px auto;
+
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================================
+   RECUADROS
+========================================================= */
+.recuadroA,
+.recuadroB,
+.recuadroC {
+    background-color: #ffffff;
+
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #0d6efd;
+
+    padding: 20px;
+
+    border-radius: 5px;
+
+    margin: 20px auto;
+
+    width: 90%;
+    max-width: 1000px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+
+    text-align: center;
+
+    transition: box-shadow 0.2s ease;
+}
+
+.recuadroA:hover,
+.recuadroB:hover,
+.recuadroC:hover {
+    transform: none;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================================
+   BOTONES DE CONTACTO
+========================================================= */
+.btn-contacto {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 9px 15px;
+
+    margin: 5px;
+
+    border-radius: 5px;
+
+    text-decoration: none;
+
+    color: #ffffff;
+    font-weight: 500;
+
+    transition: opacity 0.2s ease;
+}
+
+.btn-contacto:hover {
+    transform: none;
+    opacity: 0.9;
+}
+
+
+/* WhatsApp */
+.whatsapp {
+    background-color: #25D366;
+}
+
+
+/* Correo */
+.correo {
+    background-color: #dc3545;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+footer {
+    background-color: #0d6efd;
+
+    color: #ffffff;
+
+    margin-top: 40px;
+
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.10);
+}
+
+.footer-container {
+    max-width: 1110px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 25px;
+
+    padding: 30px 15px;
+
+    text-align: center;
+}
+
+.footer-col h4 {
+    font-size: 17px;
+
+    font-weight: 600;
+
+    margin-bottom: 10px;
+
+    color: #ffffff;
+}
+
+.footer-col p {
+    font-size: 14px;
+
+    color: #e9f2ff;
+
+    margin: 5px 0;
+}
+
+
+/* =========================================================
+   PARTE INFERIOR DEL FOOTER
+========================================================= */
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.12);
+
+    text-align: center;
+
+    padding: 12px;
+
+    font-size: 13px;
+
+    color: #e9ecef;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 991px) {
+
     .menu label {
         display: block;
     }
 
     .menu .navbar {
         position: absolute;
-        top: 70px;
+
+        top: 58px;
         left: 0;
         right: 0;
-        background: #1565c0;
-        flex-direction: column;
-        text-align: center;
+
+        background-color: #0d6efd;
+
         display: none;
-        padding: 15px 0;
+
+        padding: 10px 0;
+
+        z-index: 1000;
+
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .menu .navbar ul {
         flex-direction: column;
-        gap: 10px;
+        gap: 2px;
     }
 
-    #menu:checked~.navbar {
-        display: flex;
+    .menu .navbar ul li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .menu .navbar ul li a {
+        border-radius: 0;
+        padding: 10px;
+    }
+
+    #menu:checked ~ .navbar {
+        display: block;
     }
 }
 
-/* TITULOS */
-.title3 {
-    color: #0a0b61;
-    font-size: 28px;
-    font-weight: bold;
-    margin: 25px 0;
-    text-align: center;
-}
-
-/* TEXTO */
-.text4 {
-    color: #333;
-    text-align: center;
-    font-size: 18px;
-    max-width: 800px;
-    margin: 20px auto;
-    line-height: 1.8;
-    padding: 10px;
-    background: #ffffffd9;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* IMAGEN */
-.clinica {
-    display: block;
-    max-width: 600px;
-    width: 100%;
-    margin: 20px auto;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* RECUADROS */
-.recuadroA,
-.recuadroB,
-.recuadroC {
-    background: #ffffff;
-    border: 2px solid #1565c0;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px auto;
-    width: 90%;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    transition: transform 0.2s ease;
-}
-
-.recuadroA:hover,
-.recuadroB:hover,
-.recuadroC:hover {
-    transform: translateY(-5px);
-}
-
-/* FOOTER */
-footer {
-    background: linear-gradient(90deg, #0a0b61, #1565c0);
-    color: #ffffff;
-    margin-top: 40px;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.footer-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 30px;
-    text-align: center;
-}
-
-.footer-col h4 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #bbdefb;
-    /* azul claro suave */
-}
-
-.footer-col p {
-    font-size: 14px;
-    color: #e3f2fd;
-    /* casi blanco azulado */
-    margin: 5px 0;
-}
-
-/* Línea final */
-.footer-bottom {
-    background-color: rgba(0, 0, 0, 0.2);
-    text-align: center;
-    padding: 10px;
-    font-size: 13px;
-    color: #cfd8dc;
-}
-
-.btn-contacto {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 8px;
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-    transition: transform 0.2s ease;
-}
-
-.btn-contacto:hover {
-    transform: translateY(-2px);
-}
-
-.whatsapp {
-    background: #25D366;
-}
-
-.correo {
-    background: #EA4335;
-}
 
 @media (max-width: 768px) {
+
+    .title3 {
+        font-size: 25px;
+        margin-top: 25px;
+    }
+
+    .text4 {
+        width: 90%;
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .clinica {
+        width: 90%;
+    }
+
+    .recuadroA,
+    .recuadroB,
+    .recuadroC {
+        width: 90%;
+        padding: 17px;
+    }
+
     .btn-contacto {
         width: 100%;
         margin: 5px 0;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        padding: 25px 15px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .title3 {
+        font-size: 22px;
+    }
+
+    .text4 {
+        font-size: 15px;
+    }
+
+    .recuadroA,
+    .recuadroB,
+    .recuadroC {
+        width: 95%;
     }
 }

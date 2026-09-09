@@ -9,19 +9,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
+import com.wilsonmontenegro.odontologia.security.GoogleOAuth2User;
+import com.wilsonmontenegro.odontologia.security.GoogleOAuth2UserService;
 import com.wilsonmontenegro.odontologia.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,105 +31,152 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService usuarioDetailsService;
+    private final GoogleOAuth2UserService googleOAuth2UserService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    public DaoAuthenticationProvider authenticationProvider(
+            PasswordEncoder passwordEncoder) {
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(usuarioDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
+
         return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 🔥 Filtro necesario para DELETE/PUT/PATCH en formularios HTML
+    // Filtro necesario para DELETE/PUT/PATCH en formularios HTML
     @Bean
-public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-    return new HiddenHttpMethodFilter();
-}
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // CSRF para formularios Thymeleaf
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/api/**") // API sin CSRF
-            )
+                // CSRF para formularios Thymeleaf
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(
+                                CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/**")
+                )
 
-            // Sesiones SOLO para vistas Thymeleaf
-            .sessionManagement(sm -> sm
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            )
+                // Sesiones SOLO para vistas Thymeleaf
+                .sessionManagement(sm -> sm
+                        .sessionCreationPolicy(
+                                SessionCreationPolicy.IF_REQUIRED))
 
-            .authenticationProvider(authenticationProvider())
+                // El logout lo hace AuthWebController
+                .logout(logout -> logout.disable())
 
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)
-            )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
 
-            .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-                // Público
-                .requestMatchers(
-                    "/", "/mision", "/vision", "/objetivos", "/servicios-publicos","/servicios/publicos",
-                    "/login", "/register", "/logout", "/error/**",
-                    "/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico",
-                    "/api/auth/**"
-                ).permitAll()
+                        // Público
+                        .requestMatchers(
+                                "/",
+                                "/mision",
+                                "/vision",
+                                "/objetivos",
+                                "/servicios-publicos",
+                                "/servicios/publicos",
+                                "/login",
+                                "/register",
+                                "/logout",
+                                "/error/**",
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/uploads/**",
+                                "/webjars/**",
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**"
+                        )
+                        .permitAll()
 
-                // INVENTARIO
-                .requestMatchers("/inventario/**")
-                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+                        // INVENTARIO
+                        .requestMatchers("/inventario/**")
+                        .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
-                .requestMatchers(HttpMethod.DELETE, "/inventario/**")
-                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+                        .requestMatchers(HttpMethod.DELETE, "/inventario/**")
+                        .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
-                .requestMatchers(HttpMethod.PUT, "/inventario/**")
-                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PUT, "/inventario/**")
+                        .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
-                .requestMatchers(HttpMethod.PATCH, "/inventario/**")
-                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PATCH, "/inventario/**")
+                        .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
-                // ADMIN
-                .requestMatchers("/admin/**", "/api/admin/**")
-                    .hasRole("ADMINISTRADOR")
+                        // ADMIN
+                        .requestMatchers("/admin/**", "/api/admin/**")
+                        .hasRole("ADMINISTRADOR")
 
-                // EMPLEADO
-                .requestMatchers("/empleado/**", "/api/empleado/**")
-                    .hasRole("EMPLEADO")
+                        // EMPLEADO
+                        .requestMatchers("/empleado/**", "/api/empleado/**")
+                        .hasRole("EMPLEADO")
 
-                // CLIENTE
-                .requestMatchers("/cliente/**", "/api/cliente/**")
-                    .hasRole("CLIENTE")
+                        // CLIENTE
+                        .requestMatchers("/cliente/**", "/api/cliente/**")
+                        .hasRole("CLIENTE")
 
-                // Servicios compartidos
-                .requestMatchers("/servicios/**")
-                    .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
+                        // Servicios compartidos
+                        .requestMatchers("/servicios/**")
+                        .hasAnyRole("ADMINISTRADOR", "EMPLEADO")
 
-                // API con JWT
-                .requestMatchers("/api/**").authenticated()
+                        // API con JWT
+                        .requestMatchers("/api/**")
+                        .authenticated()
 
-                .anyRequest().authenticated()
-            )
+                        .anyRequest()
+                        .authenticated()
+                )
 
-            // Filtro JWT SOLO para API
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(googleOAuth2UserService))
+                        .successHandler((request, response, authentication) -> {
+
+                            GoogleOAuth2User principal =
+                                    (GoogleOAuth2User) authentication.getPrincipal();
+
+                            switch (principal.getUsuario().getRol()) {
+
+                                case ADMINISTRADOR:
+                                    response.sendRedirect("/admin/dashboard");
+                                    break;
+
+                                case EMPLEADO:
+                                    response.sendRedirect("/empleado/dashboard");
+                                    break;
+
+                                case CLIENTE:
+                                    response.sendRedirect("/cliente/citas");
+                                    break;
+
+                                default:
+                                    response.sendRedirect("/");
+                                    break;
+                            }
+                        }))
+
+                // Filtro JWT SOLO para API
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
-
-

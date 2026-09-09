@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Pago')}"></head>
+
+<body>
+
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="container py-4">
+
+    <h2 class="mb-4">
+        <i class="fa-solid fa-credit-card text-primary"></i>
+        Pago
+    </h2>
+
+    <form id="checkoutForm" class="card p-4 shadow-sm">
+
+        <!-- Datos del comprador -->
+        <h5 class="mb-3 text-secondary">
+            Datos del comprador
+        </h5>
+
+        <div class="row mb-3">
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Nombre completo
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Correo electrónico
+                </label>
+
+                <input
+                    type="email"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- Dirección -->
+        <h5 class="mb-3 text-secondary">
+            Dirección de envío
+        </h5>
+
+        <div class="row mb-3">
+
+            <div class="col-md-8">
+
+                <label class="form-label">
+                    Dirección
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Ciudad
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- Método de pago -->
+        <h5 class="mb-3 text-secondary">
+            Método de pago
+        </h5>
+
+        <div class="row mb-3">
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Número de tarjeta
+                </label>
+
+                <input
+                    id="numeroTarjeta"
+                    type="text"
+                    class="form-control"
+                    inputmode="numeric"
+                    autocomplete="cc-number"
+                    pattern="[0-9]{13,19}"
+                    minlength="13"
+                    maxlength="19"
+                    title="Ingresa entre 13 y 19 dígitos"
+                    required
+                >
+
+                <div class="invalid-feedback">
+                    Ingresa un número de tarjeta válido.
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Fecha vencimiento
+                </label>
+
+                <div class="row g-2">
+
+                    <div class="col-6">
+
+                        <select
+                            id="mesVencimiento"
+                            class="form-select"
+                            aria-label="Mes de vencimiento"
+                            required
+                        >
+                            <option value="">
+                                Mes
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <select
+                            id="anioVencimiento"
+                            class="form-select"
+                            aria-label="Año de vencimiento"
+                            required
+                        >
+                            <option value="">
+                                Año
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="fechaError"
+                    class="invalid-feedback"
+                >
+                    Selecciona una fecha de vencimiento vigente.
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    CVV
+                </label>
+
+                <input
+                    id="cvv"
+                    type="text"
+                    class="form-control"
+                    inputmode="numeric"
+                    autocomplete="cc-csc"
+                    pattern="[0-9]{3,4}"
+                    minlength="3"
+                    maxlength="4"
+                    title="Ingresa 3 o 4 dígitos"
+                    required
+                >
+
+                <div class="invalid-feedback">
+                    El CVV debe tener 3 o 4 dígitos.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL -->
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-end align-items-center mb-3">
+
+            <h4 class="me-3">
+                Total a pagar:
+            </h4>
+
+            <h4
+                class="text-success"
+                id="total-pagar"
+            >
+                $0
+            </h4>
+
+        </div>
+
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-between align-items-center mt-2">
+
+            <a
+                th:href="@{/cliente/cart}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Volver al carrito
+            </a>
+
+            <button
+                id="confirmarCompra"
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="fa-solid fa-check"></i>
+                Confirmar compra
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+<script src="/js/script.js"></script>
+
+
+<script>
+
+/*
+ * ==========================================================
+ * MENSAJE DE COMPRA EXITOSA CON DIRECCIÓN
+ * ==========================================================
+ */
+
+function mostrarMensajeExito() {
+
+    const mensaje = document.createElement('div');
+
+    mensaje.id = 'mensajeExito';
+
+    mensaje.innerHTML = `
+        <div class="mensaje-exito-contenido">
+            <div class="mensaje-exito-icono">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="mensaje-exito-titulo">
+                ¡Compra realizada correctamente!
+            </h3>
+            <div class="mensaje-exito-direccion">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Ve hasta el consultorio en la dirección:</span>
+                <strong>Dg. 84 #79 - 36, Engativá, Bogotá</strong>
+            </div>
+            <p class="mensaje-exito-nota">
+                <i class="fa-solid fa-clock"></i>
+                Te esperamos en horario de atención.
+            </p>
+        </div>
+    `;
+
+    document.body.insertBefore(mensaje, document.body.firstChild);
+
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const form = document.getElementById('checkoutForm');
+
+    const tarjeta = document.getElementById('numeroTarjeta');
+
+    const cvv = document.getElementById('cvv');
+
+    const mes = document.getElementById('mesVencimiento');
+
+    const anio = document.getElementById('anioVencimiento');
+
+    const botonCompra = document.getElementById('confirmarCompra');
+
+
+    /*
+     * ==========================================================
+     * SOLO PERMITIR NUMEROS EN TARJETA Y CVV
+     * ==========================================================
+     */
+
+    [tarjeta, cvv].forEach(campo => {
+
+        campo.addEventListener('input', () => {
+
+            campo.value = campo.value.replace(/\D/g, '');
+
+        });
+
+    });
+
+
+    /*
+     * ==========================================================
+     * CARGAR MESES
+     * ==========================================================
+     */
+
+    for (let numeroMes = 1; numeroMes <= 12; numeroMes++) {
+
+        mes.add(
+            new Option(
+                String(numeroMes).padStart(2, '0'),
+                numeroMes
+            )
+        );
+
+    }
+
+
+    /*
+     * ==========================================================
+     * CARGAR AÑOS
+     * ==========================================================
+     */
+
+    const anioActual = new Date().getFullYear();
+
+    for (
+        let valorAnio = anioActual;
+        valorAnio <= anioActual + 15;
+        valorAnio++
+    ) {
+
+        anio.add(
+            new Option(
+                valorAnio,
+                valorAnio
+            )
+        );
+
+    }
+
+
+    /*
+     * ==========================================================
+     * VALIDAR FECHA DE VENCIMIENTO
+     * ==========================================================
+     */
+
+    function validarVencimiento() {
+
+        if (!mes.value || !anio.value) {
+
+            anio.setCustomValidity(
+                'Selecciona una fecha de vencimiento.'
+            );
+
+            return false;
+        }
+
+
+        /*
+         * Una tarjeta con vencimiento 09/2026
+         * es válida durante todo septiembre.
+         *
+         * Por eso comparamos contra el último día
+         * del mes seleccionado.
+         */
+
+        const fechaVencimiento = new Date(
+            Number(anio.value),
+            Number(mes.value),
+            0,
+            23,
+            59,
+            59
+        );
+
+        const ahora = new Date();
+
+        const vencida = fechaVencimiento < ahora;
+
+
+        if (vencida) {
+
+            anio.setCustomValidity(
+                'La tarjeta está vencida.'
+            );
+
+            return false;
+
+        }
+
+
+        anio.setCustomValidity('');
+
+        return true;
+    }
+
+
+    mes.addEventListener(
+        'change',
+        validarVencimiento
+    );
+
+    anio.addEventListener(
+        'change',
+        validarVencimiento
+    );
+
+
+    /*
+     * ==========================================================
+     * CONFIRMAR COMPRA
+     * ==========================================================
+     */
+
+    form.addEventListener('submit', async event => {
+
+        event.preventDefault();
+
+        event.stopImmediatePropagation();
+
+
+        /*
+         * Validaciones del formulario
+         */
+
+        validarVencimiento();
+
+
+        if (!form.checkValidity()) {
+
+            form.classList.add('was-validated');
+
+            return;
+
+        }
+
+
+        /*
+         * Obtener carrito
+         */
+
+        const cart = getCart();
+
+
+        if (!cart || cart.length === 0) {
+
+            showToast(
+                '🛒 No hay productos en el carrito.'
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Desactivar botón para evitar
+         * compras duplicadas.
+         */
+
+        botonCompra.disabled = true;
+
+        botonCompra.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+
+
+        /*
+         * ======================================================
+         * PREPARAR LOS PRODUCTOS
+         * ======================================================
+         *
+         * Solo enviamos:
+         *
+         * productoId
+         * cantidad
+         *
+         * El precio NO se envía.
+         *
+         * El backend obtiene el precio real
+         * directamente desde la base de datos.
+         */
+
+        const items = cart.map(item => ({
+
+            productoId: Number(item.id),
+
+            cantidad: Number(item.quantity)
+
+        }));
+
+
+        try {
+
+            /*
+             * ==================================================
+             * REGISTRAR COMPRA EN EL BACKEND
+             * ==================================================
+             */
+
+            const csrfToken = document
+                .querySelector('meta[name="_csrf"]')
+                ?.getAttribute('content');
+
+            const csrfHeader = document
+                .querySelector('meta[name="_csrf_header"]')
+                ?.getAttribute('content');
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+
+            const respuesta = await fetch(
+                '/cliente/registrar-venta',
+                {
+                    method: 'POST',
+
+                    headers,
+
+                    body: JSON.stringify(items)
+                }
+            );
+
+
+            /*
+             * Intentar obtener la respuesta
+             */
+
+            const contenido = await respuesta.text();
+
+
+            /*
+             * Si el backend devuelve error
+             */
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    contenido ||
+                    'No fue posible procesar la compra.'
+                );
+
+            }
+
+
+            /*
+             * ==================================================
+             * COMPRA EXITOSA
+             * ==================================================
+             */
+
+            localStorage.removeItem('cart');
+
+
+            mostrarMensajeExito();
+
+
+            /*
+             * Esperar un momento para mostrar
+             * el mensaje antes de redirigir.
+             */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    '/cliente/inventario';
+
+            }, 3000);
+
+
+        } catch (error) {
+
+            console.error(
+                'Error al realizar la compra:',
+                error
+            );
+
+
+            showToast(
+                '❌ ' +
+                (
+                    error.message ||
+                    'No fue posible realizar la compra.'
+                )
+            );
+
+
+            /*
+             * Reactivar botón
+             */
+
+            botonCompra.disabled = false;
+
+            botonCompra.innerHTML =
+                '<i class="fa-solid fa-check"></i> Confirmar compra';
+
+        }
+
+    }, true);
+
+});
+
+</script>
+
+</body>
+</html>

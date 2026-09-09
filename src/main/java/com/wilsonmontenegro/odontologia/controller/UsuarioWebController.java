@@ -21,20 +21,34 @@ public class UsuarioWebController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public String index(@RequestParam(required = false, defaultValue = "") String search, Model model) {
+    public String index(@RequestParam(required = false, defaultValue = "") String search,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        String busqueda = search.trim();
+
+        if (!busqueda.isEmpty() && busqueda.matches("\\d+") && busqueda.length() < 7) {
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Solo se puede buscar por nombre, correo, teléfono, estado o rol.");
+
+            return "redirect:/admin/usuarios";
+        }
+
         model.addAttribute("usuarios", usuarioService.buscar(search));
         model.addAttribute("search", search);
         model.addAttribute("roles", Rol.values());
+
         return "usuarios/index";
     }
 
     @PostMapping
     public String store(@RequestParam String nombre,
-                         @RequestParam String email,
-                         @RequestParam String telefono,
-                         @RequestParam Rol rol,
-                         @RequestParam String password,
-                         RedirectAttributes redirectAttributes) {
+            @RequestParam String email,
+            @RequestParam String telefono,
+            @RequestParam Rol rol,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
         try {
             usuarioService.crear(nombre, email, telefono, rol, password);
             redirectAttributes.addFlashAttribute("success", "Usuario creado correctamente.");
@@ -46,12 +60,12 @@ public class UsuarioWebController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Long id,
-                          @RequestParam String nombre,
-                          @RequestParam String email,
-                          @RequestParam String telefono,
-                          @RequestParam Rol rol,
-                          @RequestParam(required = false) String password,
-                          RedirectAttributes redirectAttributes) {
+            @RequestParam String nombre,
+            @RequestParam String email,
+            @RequestParam String telefono,
+            @RequestParam Rol rol,
+            @RequestParam(required = false) String password,
+            RedirectAttributes redirectAttributes) {
         try {
             usuarioService.actualizar(id, nombre, email, telefono, rol, password);
             redirectAttributes.addFlashAttribute("success", "Usuario actualizado correctamente.");
@@ -66,6 +80,17 @@ public class UsuarioWebController {
         try {
             usuarioService.eliminar(id);
             redirectAttributes.addFlashAttribute("success", "Usuario eliminado correctamente.");
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/usuarios";
+    }
+
+    @PatchMapping("/{id}/estado")
+    public String toggleEstado(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.toggleEstado(id);
+            redirectAttributes.addFlashAttribute("success", "Estado del usuario actualizado.");
         } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

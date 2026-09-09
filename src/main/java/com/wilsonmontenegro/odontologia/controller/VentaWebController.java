@@ -1,5 +1,21 @@
 package com.wilsonmontenegro.odontologia.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Venta;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
@@ -7,19 +23,16 @@ import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
 import com.wilsonmontenegro.odontologia.service.VentaService;
 import com.wilsonmontenegro.odontologia.util.AuthUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 /**
- * Registro de ventas desde el panel de Administrador/Empleado. Equivalente a VentaController.php.
+ * Registro y administración de ventas desde el panel
+ * de Administrador y Empleado.
+ *
+ * También muestra las compras realizadas por los clientes,
+ * ya que todas las compras quedan registradas como Venta.
  */
 @Controller
 @RequiredArgsConstructor
@@ -30,56 +43,247 @@ public class VentaWebController {
     private final PdfService pdfService;
     private final ExcelService excelService;
 
+
+    // ============================================================
+    // LISTAR VENTAS
+    // ============================================================
+
     @GetMapping({"/admin/ventas", "/empleado/ventas"})
-    public String index(Model model) {
-        model.addAttribute("ventas", ventaService.listarTodas());
-        model.addAttribute("productos", inventarioService.listarTodos());
+    public String index(
+            Model model,
+            HttpServletRequest request) {
+
+        List<Venta> ventas =
+                ventaService.listarTodas();
+
+        model.addAttribute(
+                "ventas",
+                ventas
+        );
+
+        model.addAttribute(
+                "productos",
+                inventarioService.listarTodos()
+        );
+
+        String base =
+                request.getRequestURI()
+                        .startsWith("/admin")
+                        ? "/admin/ventas"
+                        : "/empleado/ventas";
+
+        model.addAttribute(
+                "base",
+                base
+        );
+
         return "ventas/index";
     }
 
+
+    // ============================================================
+    // REGISTRAR VENTA INTERNA
+    // ============================================================
+
     @PostMapping({"/admin/ventas", "/empleado/ventas"})
-    public String store(@RequestParam Long idInventario,
-                         @RequestParam Integer cantidad,
-                         @RequestParam(required = false, defaultValue = "0") BigDecimal descuento,
-                         RedirectAttributes redirectAttributes) {
+    public String store(
+            @RequestParam Long idInventario,
+            @RequestParam Integer cantidad,
+            @RequestParam(
+                    required = false,
+                    defaultValue = "0"
+            ) BigDecimal descuento,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+
         try {
-            String responsable = AuthUtil.usuarioActual() != null ? AuthUtil.usuarioActual().getName() : "N/A";
-            ventaService.registrarVenta(idInventario, cantidad, descuento, responsable, "VENTA_INTERNA", null);
-            redirectAttributes.addFlashAttribute("success", "Venta registrada correctamente.");
+
+            if (idInventario == null) {
+                throw new BusinessException(
+                        "Debes seleccionar un producto."
+                );
+            }
+
+            if (cantidad == null || cantidad <= 0) {
+                throw new BusinessException(
+                        "La cantidad debe ser mayor que cero."
+                );
+            }
+
+            String responsable =
+                    AuthUtil.usuarioActual() != null
+                            ? AuthUtil.usuarioActual().getName()
+                            : "Sistema";
+
+            ventaService.registrarVenta(
+                    idInventario,
+                    cantidad,
+                    descuento,
+                    responsable,
+                    "VENTA_INTERNA",
+                    null
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Venta registrada correctamente."
+            );
+
         } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
         }
-        return "redirect:/admin/ventas";
+
+
+        String base =
+                request.getRequestURI()
+                        .startsWith("/admin")
+                        ? "/admin/ventas"
+                        : "/empleado/ventas";
+
+        return "redirect:" + base;
     }
 
-    @DeleteMapping({"/admin/ventas/{id}", "/empleado/ventas/{id}"})
-    public String destroy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
+    // ============================================================
+    // ELIMINAR / ANULAR VENTA
+    // ============================================================
+
+    @DeleteMapping({
+            "/admin/ventas/{id}",
+            "/empleado/ventas/{id}"
+    })
+    public String destroy(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+
         try {
+
             ventaService.eliminar(id);
-            redirectAttributes.addFlashAttribute("success", "Venta anulada y stock restaurado correctamente.");
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Venta anulada y stock restaurado correctamente."
+            );
+
         } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
         }
-        return "redirect:/admin/ventas";
+
+
+        String base =
+                request.getRequestURI()
+                        .startsWith("/admin")
+                        ? "/admin/ventas"
+                        : "/empleado/ventas";
+
+        return "redirect:" + base;
     }
 
-    @GetMapping({"/admin/ventas/{id}/pdf", "/empleado/ventas/{id}/pdf"})
-    public ResponseEntity<byte[]> generarPdf(@PathVariable Long id) {
-        Venta venta = ventaService.obtenerPorId(id);
-        byte[] pdf = pdfService.generarPdfVenta(venta);
+
+    // ============================================================
+    // CAMBIAR ESTADO DE VENTA
+    // ============================================================
+
+    @PatchMapping({
+            "/admin/ventas/{id}/estado",
+            "/empleado/ventas/{id}/estado"
+    })
+    public String toggleEstado(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+
+        try {
+
+            ventaService.toggleEstado(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Estado de la venta actualizado correctamente."
+            );
+
+        } catch (BusinessException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
+
+
+        String base =
+                request.getRequestURI()
+                        .startsWith("/admin")
+                        ? "/admin/ventas"
+                        : "/empleado/ventas";
+
+        return "redirect:" + base;
+    }
+
+
+    // ============================================================
+    // GENERAR PDF
+    // ============================================================
+
+    @GetMapping({
+            "/admin/ventas/{id}/pdf",
+            "/empleado/ventas/{id}/pdf"
+    })
+    public ResponseEntity<byte[]> generarPdf(
+            @PathVariable Long id) {
+
+        Venta venta =
+                ventaService.obtenerPorId(id);
+
+        byte[] pdf =
+                pdfService.generarPdfVenta(venta);
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=venta_" + id + ".pdf")
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=venta_" + id + ".pdf"
+                )
                 .body(pdf);
     }
 
-    @GetMapping({"/admin/ventas/{id}/excel", "/empleado/ventas/{id}/excel"})
-    public ResponseEntity<byte[]> generarExcel(@PathVariable Long id) {
-        Venta venta = ventaService.obtenerPorId(id);
-        byte[] excel = excelService.generarExcelVenta(venta);
+
+    // ============================================================
+    // GENERAR EXCEL
+    // ============================================================
+
+    @GetMapping({
+            "/admin/ventas/{id}/excel",
+            "/empleado/ventas/{id}/excel"
+    })
+    public ResponseEntity<byte[]> generarExcel(
+            @PathVariable Long id) {
+
+        Venta venta =
+                ventaService.obtenerPorId(id);
+
+        byte[] excel =
+                excelService.generarExcelVenta(venta);
+
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Venta_" + id + ".xlsx")
+                .contentType(
+                        MediaType.parseMediaType(
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                )
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=Venta_" + id + ".xlsx"
+                )
                 .body(excel);
     }
 }

@@ -1,17 +1,28 @@
 package com.wilsonmontenegro.odontologia.model;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import com.wilsonmontenegro.odontologia.model.enums.EstadoVenta;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-/**
- * Entidad Venta. Equivalente al modelo Venta.php (tabla `ventas`) de Laravel.
- */
 @Entity
 @Table(name = "ventas")
 @Data
@@ -29,7 +40,6 @@ public class Venta {
     @JoinColumn(name = "producto_id", nullable = false)
     private Inventario producto;
 
-    /** Usuario cliente que realizo la compra; nulo para ventas internas. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comprador_usuario_id")
     private Usuario comprador;
@@ -53,10 +63,24 @@ public class Venta {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private EstadoVenta estado = EstadoVenta.ACTIVA;
+
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        LocalDateTime ahora = LocalDateTime.now();
+        this.createdAt = ahora;
+        this.updatedAt = ahora;
+
+        if (this.descuento == null) {
+            this.descuento = BigDecimal.ZERO;
+        }
+
+        if (this.estado == null) {
+            this.estado = EstadoVenta.ACTIVA;
+        }
     }
 
     @PreUpdate

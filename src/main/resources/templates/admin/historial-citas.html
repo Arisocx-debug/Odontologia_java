@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Historial de Citas')}">
+</head>
+
+<body>
+
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <div th:replace="~{fragments/footer :: alertas}"></div>
+
+    <div class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h2>
+                <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+                Historial de Citas
+            </h2>
+
+        </div>
+
+        <!-- FILTROS -->
+
+        <form th:action="@{/admin/historial-citas}" method="get" class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <!-- BUSQUEDA -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Buscar
+                        </label>
+
+                        <input type="text" name="search" th:value="${search}" class="form-control"
+                            placeholder="Cliente, correo o servicio...">
+
+                    </div>
+
+                    <!-- CLIENTE -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Cliente
+                        </label>
+
+                        <select name="clienteId" class="form-select">
+
+                            <option value="">
+                                Todos los clientes
+                            </option>
+
+                            <option th:each="cliente : ${clientes}" th:value="${cliente.idCliente}"
+                                th:selected="${clienteId != null and clienteId == cliente.idCliente}"
+                                th:text="${cliente.usuario.name}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- ESTADO -->
+
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Estado
+                        </label>
+
+                        <select name="estado" class="form-select">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="ATENDIDA" th:selected="${estado != null and estado.name() == 'ATENDIDA'}">
+                                Atendida
+                            </option>
+
+                            <option value="CANCELADA" th:selected="${estado != null and estado.name() == 'CANCELADA'}">
+                                Cancelada
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- FECHA DESDE -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Desde
+                        </label>
+
+                        <input type="date" name="fechaDesde" th:value="${fechaDesde}" class="form-control">
+
+                    </div>
+
+                    <!-- FECHA HASTA -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Hasta
+                        </label>
+
+                        <input type="date" name="fechaHasta" th:value="${fechaHasta}" class="form-control">
+
+                    </div>
+
+                    <!-- BOTONES -->
+
+                    <div class="col-md-9 d-flex align-items-end gap-2">
+
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="fa-solid fa-filter"></i>
+                            Filtrar
+
+                        </button>
+
+                        <a th:href="@{/admin/historial-citas}" class="btn btn-outline-secondary">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Limpiar
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- TABLA -->
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle bg-white shadow-sm">
+
+                <thead class="table-primary">
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Correo</th>
+                        <th>Servicio</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="cita : ${citas}">
+
+                        <td th:text="${cita.idCita}">
+                        </td>
+
+                        <td th:text="${cita.cliente != null and cita.cliente.usuario != null
+                        ? cita.cliente.usuario.name : '-'}">
+                        </td>
+
+                        <td th:text="${cita.cliente != null and cita.cliente.usuario != null
+                        ? cita.cliente.usuario.email : '-'}">
+                        </td>
+
+                        <td th:text="${cita.servicio != null
+                        ? cita.servicio.nombre : '-'}">
+                        </td>
+
+                        <td th:text="${#temporals.format(
+                        cita.fechaEntrada,
+                        'dd/MM/yyyy HH:mm')}">
+                        </td>
+
+                        <td th:text="${#temporals.format(
+                        cita.fechaSalida,
+                        'dd/MM/yyyy HH:mm')}">
+                        </td>
+
+                        <td>
+
+                            <span class="badge" th:classappend="'badge-estado-' +
+                              ${#strings.toLowerCase(cita.estado)}" th:text="${cita.estado}">
+                            </span>
+
+                        </td>
+
+                        <td class="text-end table-actions">
+
+                            <a th:href="@{'/admin/citas/pdf/' + ${cita.idCita}}" target="_blank"
+                                class="btn btn-sm btn-outline-danger" title="PDF">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </a>
+
+                            <a th:href="@{'/admin/citas/' + ${cita.idCita} + '/excel'}"
+                                class="btn btn-sm btn-outline-success" title="Excel">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(citas)}">
+
+                        <td colspan="8" class="text-center text-muted py-4">
+
+                            <i class="fa-solid fa-folder-open fa-2x mb-2"></i>
+
+                            <br>
+
+                            No hay citas en el historial.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}">
+    </footer>
+
+    <div th:replace="~{fragments/footer :: scripts}">
+    </div>
+
+</body>
+
+</html>

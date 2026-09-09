@@ -1,0 +1,232 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #222;
+  color: #fff;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+main {
+  padding: 20px;
+}
+
+.products {
+  display: flex;
+  gap: 20px;
+}
+
+.product {
+  border: 1px solid #ddd;
+  padding: 15px;
+  width: 200px;
+}
+
+.btn {
+  background: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cart-table th,
+.cart-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.cart-summary {
+  font-size: 18px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+
+.toast-message {
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   background-color: #007bff;
+   color: white;
+   padding: 10px 15px;
+   border-radius: 5px;
+   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+   z-index: 9999;
+   font-size: 14px;
+}
+
+.toast-message-card {
+   background-color: #28a745;
+   color: white;
+   padding: 10px 15px;
+   border-radius: 8px;
+   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+   font-size: 14px;
+   font-weight: 600;
+   text-align: center;
+   margin-bottom: 10px;
+   animation: slideDown 0.3s ease-out;
+   z-index: 1000;
+}
+
+@keyframes slideDown {
+    from {
+       opacity: 0;
+       transform: translateY(-10px);
+    }
+    to {
+       opacity: 1;
+       transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   MENSAJE DE COMPRA EXITOSA
+   ============================================================ */
+
+#mensajeExito {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    animation: slideDownExito 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideDownExito {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mensaje-exito-contenido {
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+    color: white;
+    padding: 30px 20px 35px 20px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(5, 150, 105, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 5px solid #047857;
+    position: relative;
+    overflow: hidden;
+}
+
+.mensaje-exito-contenido::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.mensaje-exito-icono {
+    font-size: 56px;
+    margin-bottom: 12px;
+    animation: bounce 1.2s ease infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-8px) scale(1.05);
+    }
+}
+
+.mensaje-exito-titulo {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 18px 0;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.mensaje-exito-direccion {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 18px 24px;
+    margin: 0 auto 18px auto;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.mensaje-exito-direccion i {
+    font-size: 32px;
+    color: #fef3c7;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.mensaje-exito-direccion span {
+    font-size: 15px;
+    opacity: 0.95;
+    font-weight: 500;
+}
+
+.mensaje-exito-direccion strong {
+    font-size: 20px;
+    color: #fef3c7;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.mensaje-exito-nota {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.85;
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+}
+
+.mensaje-exito-nota i {
+    margin-right: 6px;
+    color: #fef3c7;
+}

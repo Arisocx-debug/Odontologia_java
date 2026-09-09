@@ -1,21 +1,128 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{layouts/auth :: head('Iniciar Sesión - Dr. Wilson Montenegro')}"></head>
+<head th:replace="~{layouts/auth :: head('Iniciar Sesión - Dr. Wilson Montenegro')}">
+</head>
 
 <body>
-    <header th:replace="~{layouts/auth :: header('login')}"></header><br><br><br><br><br><br>
-    <main>
-        <div class="login-container">
-            <h2>Iniciar Sesión</h2>
-            <form method="post" th:action="@{/login}"><input type="email" name="email" placeholder="Correo electrónico"
-                    required><input type="password" name="password" placeholder="Contraseña" required><button
-                    type="submit">Ingresar</button></form>
-            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
-        </div>
-    </main>
+
+    <header th:replace="~{layouts/auth :: header('login')}">
+    </header>
+
     <br><br><br><br><br><br>
-    <footer th:replace="~{layouts/auth :: footer}"></footer>
+
+    <main>
+
+        <div class="login-container">
+
+            <h2>Iniciar Sesión</h2>
+
+
+            <!-- ============================= -->
+            <!-- REGISTRO EXITOSO -->
+            <!-- ============================= -->
+
+            <div th:if="${mensaje}" class="form-alert form-alert-success" role="alert" th:text="${mensaje}">
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- ERROR LOGIN -->
+            <!-- ============================= -->
+
+            <div th:if="${error}" class="form-alert form-alert-error" role="alert" th:text="${error}">
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- FORMULARIO LOGIN -->
+            <!-- ============================= -->
+
+            <form method="post" th:action="@{/login}">
+
+                <input type="email" name="email" placeholder="Correo electrónico" required>
+
+                <input type="password" name="password" placeholder="Contraseña" required>
+
+                <button type="submit">
+                    Ingresar
+                </button>
+
+                <div class="text-center my-3">
+                    <span>O</span>
+                </div>
+
+                <a href="/oauth2/authorization/google" class="btn btn-outline-dark w-100">
+
+                    <i class="fa-brands fa-google"></i>
+
+                    Continuar con Google
+
+                </a>
+
+            </form>
+
+
+            <p>
+                ¿No tienes cuenta?
+                <a th:href="@{/register}">
+                    Regístrate aquí
+                </a>
+            </p>
+
+        </div>
+
+    </main>
+
+    <br><br><br><br><br><br>
+
+    <footer th:replace="~{layouts/auth :: footer}">
+    </footer>
+
+
+    <!-- ============================= -->
+    <!-- ESTILOS DE MENSAJES -->
+    <!-- ============================= -->
+
+    <style>
+        .form-alert {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            margin: 0 0 18px 0;
+
+            padding: 12px 14px;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+
+            line-height: 1.4;
+        }
+
+
+        .form-alert-success {
+
+            color: #0f5132;
+
+            background: #d1e7dd;
+
+            border: 1px solid #badbcc;
+        }
+
+
+        .form-alert-error {
+
+            color: #842029;
+
+            background: #f8d7da;
+
+            border: 1px solid #f5c2c7;
+        }
+    </style>
+
 </body>
 
 </html>

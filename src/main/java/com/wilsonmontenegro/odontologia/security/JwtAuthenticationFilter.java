@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,32 +39,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = resolverToken(request);
 
-        if (token != null && jwtTokenProvider.esTokenValido(token)) {
+        if (token != null && !token.isBlank() && jwtTokenProvider.esTokenValido(token)) {
+            try {
+                Claims claims = jwtTokenProvider.extraerClaims(token);
+                String email = claims.getSubject();
+                String rol = claims.get("rol", String.class);
 
-            Claims claims = jwtTokenProvider.extraerClaims(token);
+                UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
 
-            String email = claims.getSubject();
-            String rol = claims.get("rol", String.class); // ADMINISTRADOR, EMPLEADO, CLIENTE
+                if (userDetails.isEnabled()) {
+                    GrantedAuthority authority = new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                            "ROLE_" + rol);
 
-            System.out.println("=================================");
-            System.out.println("AUTH ACTUAL: "
-                    + SecurityContextHolder.getContext().getAuthentication());
-            System.out.println("=================================");
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            List.of(authority));
 
-            UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
 
-            GrantedAuthority authority = new org.springframework.security.core.authority.SimpleGrantedAuthority(
-                    "ROLE_" + rol);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    List.of(authority));
-
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (UsernameNotFoundException ignored) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -77,7 +77,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if (cookieName.equals(cookie.getName())) {
+                if (cookieName.equals(cookie.getName())
+                        && cookie.getValue() != null
+                        && !cookie.getValue().isBlank()) {
                     return cookie.getValue();
                 }
             }
