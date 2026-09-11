@@ -31,11 +31,6 @@ public class NoStoreCacheFilter extends OncePerRequestFilter {
     }
 
     private static boolean esRecursoEstatico(String uri) {
-        return uri.startsWith("/css/")
-                || uri.startsWith("/js/")
-                || uri.startsWith("/img/")
-                || uri.startsWith("/uploads/")
-                || uri.startsWith("/webjars/")
-                || uri.endsWith(".ico");
+        return uri.endsWith(".ico");
     }
 }

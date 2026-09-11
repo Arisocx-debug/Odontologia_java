@@ -29,7 +29,7 @@ spring:
     open-in-view: false
 
   thymeleaf:
-    cache: true
+    cache: false
     encoding: UTF-8
 
   servlet:
