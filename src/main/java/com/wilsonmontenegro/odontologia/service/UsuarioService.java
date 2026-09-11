@@ -72,68 +72,78 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario actualizar(Long id, String nombre, String email, String telefono, Rol rol, String nuevaPassword) {
-        Usuario usuario = obtenerPorId(id);
+public Usuario actualizar(
+        Long id,
+        String nombre,
+        String email,
+        String telefono,
+        Rol rol,
+        String nuevaPassword) {
 
-        usuarioRepository.findByEmail(email).ifPresent(existente -> {
-            if (!existente.getId().equals(id)) {
-                throw new BusinessException("Ya existe otra cuenta con ese correo.");
-            }
-        });
+    Usuario usuario = obtenerPorId(id);
 
-        usuario.setName(nombre);
-        usuario.setEmail(email);
-        usuario.setTelefono(telefono);
-        usuario.setRol(rol);
-
-        if (nuevaPassword != null && !nuevaPassword.isBlank()) {
-            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+    usuarioRepository.findByEmail(email).ifPresent(existente -> {
+        if (!existente.getId().equals(id)) {
+            throw new BusinessException(
+                    "Ya existe otra cuenta con ese correo.");
         }
+    });
 
-        usuario = usuarioRepository.save(usuario);
+    usuario.setName(nombre);
+    usuario.setEmail(email);
+    usuario.setTelefono(telefono);
+    usuario.setRol(rol);
 
-        if (rol == Rol.CLIENTE && !clienteRepository.existsByUsuarioId(id)) {
-            Cliente cliente = Cliente.builder().usuario(usuario).build();
-            clienteRepository.save(cliente);
-        }
-
-        return usuario;
+    if (nuevaPassword != null && !nuevaPassword.isBlank()) {
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
     }
+
+    usuario = usuarioRepository.save(usuario);
+
+    if (rol == Rol.CLIENTE
+            && !clienteRepository.existsByUsuarioId(id)) {
+
+        Cliente cliente = Cliente.builder()
+                .usuario(usuario)
+                .build();
+
+        clienteRepository.save(cliente);
+    }
+
+    return usuario;
+}
 
     @Transactional
-    public void eliminar(Long id) {
+public void eliminar(Long id) {
 
-        Usuario usuario = obtenerPorId(id);
+    Usuario usuario = obtenerPorId(id);
 
-        // No permitir eliminar el único administrador
-        if (usuario.getRol() == Rol.ADMINISTRADOR
-                && usuarioRepository.countByRol(Rol.ADMINISTRADOR) <= 1) {
+    // No permitir eliminar el único administrador
+    if (usuario.getRol() == Rol.ADMINISTRADOR
+            && usuarioRepository.countByRol(Rol.ADMINISTRADOR) <= 1) {
 
-            throw new BusinessException(
-                    "No se puede eliminar el único administrador del sistema.");
-        }
-
-        // Si el usuario es CLIENTE, verificar si tiene citas
-        if (usuario.getRol() == Rol.CLIENTE) {
-
-            long cantidadCitas = citaRepository.countByClienteUsuarioId(id);
-
-            // Si tiene citas, no permitir la eliminación
-            if (cantidadCitas > 0) {
-
-                throw new BusinessException(
-                        "No se puede eliminar el usuario porque tiene citas relacionadas.");
-            }
-
-            // Si no tiene citas, eliminar primero el cliente
-            clienteRepository.findByUsuarioId(id).ifPresent(cliente -> {
-                clienteRepository.delete(cliente);
-            });
-        }
-
-        // Finalmente eliminar el usuario
-        usuarioRepository.delete(usuario);
+        throw new BusinessException(
+                "No se puede eliminar el único administrador del sistema.");
     }
+
+    // Si el usuario es CLIENTE, verificar si tiene citas
+    if (usuario.getRol() == Rol.CLIENTE) {
+
+        long cantidadCitas = citaRepository.countByClienteUsuarioId(id);
+
+        if (cantidadCitas > 0) {
+            throw new BusinessException(
+                    "No se puede eliminar el usuario porque tiene citas relacionadas.");
+        }
+
+        clienteRepository.findByUsuarioId(id).ifPresent(cliente -> {
+            clienteRepository.delete(cliente);
+        });
+    }
+
+    // Finalmente eliminar el usuario
+    usuarioRepository.delete(usuario);
+}
 
     @Transactional
     public Usuario toggleEstado(Long id) {

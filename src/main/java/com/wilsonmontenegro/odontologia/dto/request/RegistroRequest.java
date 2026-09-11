@@ -10,11 +10,19 @@ import lombok.Data;
 public class RegistroRequest {
 
     @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 100)
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
+    @Pattern(
+        regexp = "^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$",
+        message = "El nombre solo puede contener letras y espacios"
+    )
     private String nombre;
 
     @NotBlank(message = "El apellido es obligatorio")
-    @Size(max = 100)
+    @Size(max = 100, message = "El apellido no puede superar los 100 caracteres")
+    @Pattern(
+        regexp = "^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$",
+        message = "El apellido solo puede contener letras y espacios"
+    )
     private String apellido;
 
     @NotBlank(message = "El correo es obligatorio")
