@@ -34,8 +34,11 @@ public class ProveedorWebController {
                          @RequestParam(required = false) String direccion,
                          RedirectAttributes redirectAttributes) {
         try {
+            if (contacto == null || !contacto.matches("[A-Za-zÀ-ÿ\\s]{2,}")) {
+                throw new BusinessException("El contacto debe ser un nombre valido (solo letras).");
+            }
             Proveedor datos = Proveedor.builder()
-                    .nombre(nombre).contacto(contacto).telefono(telefono)
+                    .nombre(nombre).contacto(contacto.trim()).telefono(telefono)
                     .email(email).direccion(direccion).build();
             proveedorService.crear(datos);
             redirectAttributes.addFlashAttribute("success", "Proveedor creado correctamente.");
@@ -54,8 +57,11 @@ public class ProveedorWebController {
                           @RequestParam(required = false) String direccion,
                           RedirectAttributes redirectAttributes) {
         try {
+            if (contacto == null || !contacto.matches("[A-Za-zÀ-ÿ\\s]{2,}")) {
+                throw new BusinessException("El contacto debe ser un nombre valido (solo letras).");
+            }
             Proveedor datos = Proveedor.builder()
-                    .nombre(nombre).contacto(contacto).telefono(telefono)
+                    .nombre(nombre).contacto(contacto.trim()).telefono(telefono)
                     .email(email).direccion(direccion).build();
             proveedorService.actualizar(id, datos);
             redirectAttributes.addFlashAttribute("success", "Proveedor actualizado correctamente.");
