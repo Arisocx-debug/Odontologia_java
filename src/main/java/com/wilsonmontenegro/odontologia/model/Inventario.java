@@ -85,24 +85,38 @@ public class Inventario {
         String valor = imagen.trim().replace("\\", "/");
 
         if (valor.startsWith("http://") || valor.startsWith("https://") || valor.startsWith("/")) {
-            return valor;
+            return agregarCacheBusting(valor);
         }
 
         int staticImgIndex = valor.indexOf("static/img/");
         if (staticImgIndex >= 0) {
-            return "/img/" + codificarSegmentos(valor.substring(staticImgIndex + "static/img/".length()));
+            return agregarCacheBusting("/img/" + codificarSegmentos(valor.substring(staticImgIndex + "static/img/".length())));
         }
 
         int imgIndex = valor.indexOf("img/");
         if (imgIndex >= 0) {
-            return "/img/" + codificarSegmentos(valor.substring(imgIndex + "img/".length()));
+            return agregarCacheBusting("/img/" + codificarSegmentos(valor.substring(imgIndex + "img/".length())));
         }
 
         if (valor.startsWith("uploads/")) {
-            return "/" + codificarSegmentos(valor);
+            return agregarCacheBusting("/" + codificarSegmentos(valor));
         }
 
-        return "/img/" + codificarSegmentos(valor);
+        return agregarCacheBusting("/img/" + codificarSegmentos(valor));
+    }
+
+    /**
+     * Agrega un parámetro de cache-busting a la URL de la imagen.
+     * Esto fuerza al navegador a cargar la nueva imagen cuando se actualiza.
+     */
+    private String agregarCacheBusting(String url) {
+        // Usar la fecha de actualización como versión, o un timestamp actual si no hay fecha
+        String version = ultimaActualizacion != null
+                ? String.valueOf(ultimaActualizacion.toEpochSecond(java.time.ZoneOffset.UTC))
+                : String.valueOf(System.currentTimeMillis());
+
+        String separator = url.contains("?") ? "&" : "?";
+        return url + separator + "v=" + version;
     }
 
     private String codificarSegmentos(String ruta) {

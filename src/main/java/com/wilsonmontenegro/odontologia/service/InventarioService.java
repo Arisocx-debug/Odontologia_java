@@ -82,7 +82,7 @@ public class InventarioService {
      * Las compras NO deben utilizar este método para descontar stock.
      */
     @Transactional
-    public Inventario actualizar(Long id, Inventario datos) {
+    public Inventario actualizar(Long id, Inventario datos, Boolean eliminarImagen) {
 
         Inventario item = obtenerPorId(id);
 
@@ -94,9 +94,15 @@ public class InventarioService {
         item.setNombreProveedor(datos.getNombreProveedor());
         item.setDescripcion(datos.getDescripcion());
 
-        if (datos.getImagen() != null && !datos.getImagen().isBlank()) {
+        // Manejar la imagen: eliminar, cambiar o mantener
+        if (eliminarImagen != null && eliminarImagen) {
+            // Eliminar imagen
+            item.setImagen(null);
+        } else if (datos.getImagen() != null && !datos.getImagen().isBlank()) {
+            // Cambiar imagen
             item.setImagen(datos.getImagen());
         }
+        // Si no se elimina y no se envía nueva imagen, se mantiene la actual
 
         /*
          * No modificamos:

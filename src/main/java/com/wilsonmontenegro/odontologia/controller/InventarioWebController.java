@@ -88,16 +88,25 @@ public class InventarioWebController {
             @RequestParam(required = false) String nombreProveedor,
             @RequestParam(required = false) String descripcion,
             @RequestParam(required = false) MultipartFile imagen,
+            @RequestParam(required = false, defaultValue = "false") Boolean eliminarImagen,
             RedirectAttributes redirectAttributes) {
 
         try {
+            // Si se solicita eliminar la imagen, no guardar ninguna
+            String imagenUrl = null;
+            if (eliminarImagen != null && eliminarImagen) {
+                imagenUrl = null; // Eliminar imagen
+            } else {
+                imagenUrl = productoImagenService.guardar(imagen);
+            }
+
             Inventario datos = Inventario.builder()
                     .nombre(nombre).stock(stock).precioUnitario(precioUnitario)
                     .nombreProveedor(nombreProveedor).descripcion(descripcion)
-                    .imagen(productoImagenService.guardar(imagen))
+                    .imagen(imagenUrl)
                     .build();
 
-            inventarioService.actualizar(id, datos);
+            inventarioService.actualizar(id, datos, eliminarImagen);
             redirectAttributes.addFlashAttribute("success", "Producto actualizado correctamente.");
 
         } catch (BusinessException e) {

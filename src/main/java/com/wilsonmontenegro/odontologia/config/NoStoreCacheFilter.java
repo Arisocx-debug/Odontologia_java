@@ -34,6 +34,7 @@ public class NoStoreCacheFilter extends OncePerRequestFilter {
         return uri.startsWith("/css/")
                 || uri.startsWith("/js/")
                 || uri.startsWith("/img/")
+                || uri.startsWith("/uploads/")
                 || uri.startsWith("/webjars/")
                 || uri.endsWith(".ico");
     }

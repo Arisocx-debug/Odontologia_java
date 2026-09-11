@@ -72,7 +72,18 @@ public class ProductoImagenService {
                 throw new BusinessException("Nombre de imagen inválido.");
             }
 
-            imagen.transferTo(destino);
+            // Escribir el archivo de forma síncrona para asegurar que esté disponible inmediatamente
+            byte[] bytes = imagen.getBytes();
+            Files.write(destino, bytes);
+
+            // Forzar la sincronización con el sistema de archivos
+            try {
+                if (destino.getFileSystem().supportedFileAttributeViews().contains("basic")) {
+                    Files.setAttribute(destino, "basic:lastModifiedTime", java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis()));
+                }
+            } catch (Exception e) {
+                // No crítico, continuar
+            }
 
             return "/uploads/productos/" + nombreArchivo;
 
