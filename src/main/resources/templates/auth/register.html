@@ -40,7 +40,12 @@
                 type="text"
                 th:field="*{nombre}"
                 placeholder="Nombre"
+                pattern="[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+"
+                maxlength="100"
+                title="El nombre solo puede contener letras y espacios"
                 required>
+
+            <small class="email-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
 
 
             <!-- APELLIDO -->
@@ -49,7 +54,12 @@
                 type="text"
                 th:field="*{apellido}"
                 placeholder="Apellido"
+                pattern="[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+"
+                maxlength="100"
+                title="El apellido solo puede contener letras y espacios"
                 required>
+
+            <small class="email-error" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></small>
 
 
             <!-- ============================= -->
@@ -83,6 +93,7 @@
                 th:field="*{telefono}"
                 placeholder="Celular"
                 pattern="[0-9]{10}"
+                inputmode="numeric"
                 maxlength="10"
                 title="El número debe tener exactamente 10 dígitos"
                 required>
@@ -228,6 +239,23 @@ document.addEventListener(
 
         const emailError =
             document.getElementById('emailError');
+
+        const camposTexto = [
+            document.getElementById('nombre'),
+            document.getElementById('apellido')
+        ];
+
+        const telefono = document.getElementById('telefono');
+
+        camposTexto.forEach(function (campo) {
+            campo.addEventListener('input', function () {
+                this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]/g, '');
+            });
+        });
+
+        telefono.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
 
 
         function validarCorreo() {

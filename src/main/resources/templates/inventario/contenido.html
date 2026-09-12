@@ -212,10 +212,15 @@
 
                     <div class="mb-3">
                         <label class="form-label">Imagen actual</label>
-                        <div>
+                        <div class="position-relative d-inline-block">
                             <img id="imagenActual" class="producto-thumb producto-thumb-lg"
                                 src="/img/producto-default.svg" alt="Imagen actual">
+                            <button type="button" id="btnEliminarImagen" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle"
+                                style="width: 25px; height: 25px; padding: 0; display: none;" title="Eliminar imagen">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
+                        <input type="hidden" id="eliminarImagen" name="eliminarImagen" value="false">
                     </div>
 
                     <div class="mb-3"><label class="form-label">Cambiar imagen</label>

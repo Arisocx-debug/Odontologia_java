@@ -41,9 +41,37 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("descripcion").value = descripcion;
         document.getElementById("imagenActual").src = imagen || "/img/producto-default.svg";
 
+        // Mostrar/ocultar botón eliminar imagen
+        const btnEliminarImagen = document.getElementById("btnEliminarImagen");
+        const eliminarImagenInput = document.getElementById("eliminarImagen");
+
+        if (imagen && imagen !== "/img/producto-default.svg") {
+            btnEliminarImagen.style.display = "block";
+            eliminarImagenInput.value = "false";
+        } else {
+            btnEliminarImagen.style.display = "none";
+            eliminarImagenInput.value = "false";
+        }
+
         // Acción correcta
         document.getElementById("formEditar").action = `/inventario/${id}`;
     });
+
+    // Manejar clic en botón eliminar imagen
+    const btnEliminarImagen = document.getElementById("btnEliminarImagen");
+    if (btnEliminarImagen) {
+        btnEliminarImagen.addEventListener("click", function() {
+            const imagenActual = document.getElementById("imagenActual");
+            const eliminarImagenInput = document.getElementById("eliminarImagen");
+
+            // Cambiar a imagen por defecto
+            imagenActual.src = "/img/producto-default.svg";
+            eliminarImagenInput.value = "true";
+
+            // Ocultar el botón de eliminar
+            this.style.display = "none";
+        });
+    }
 });
 </script>
 

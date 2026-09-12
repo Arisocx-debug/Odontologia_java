@@ -11,7 +11,7 @@ import com.wilsonmontenegro.odontologia.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Panel de estadisticas.
+ * Panel de estadísticas.
  * Equivalente a DashboardController.php.
  */
 @Controller

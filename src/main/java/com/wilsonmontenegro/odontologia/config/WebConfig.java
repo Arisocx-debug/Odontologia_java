@@ -51,7 +51,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .normalize();
 
         registry.addResourceHandler("/uploads/productos/**")
-                .addResourceLocations(productosPath.toUri().toString());
+                .addResourceLocations(productosPath.toUri().toString() + "/")
+                .setCacheControl(org.springframework.http.CacheControl.noCache().mustRevalidate());
     }
 
     /**

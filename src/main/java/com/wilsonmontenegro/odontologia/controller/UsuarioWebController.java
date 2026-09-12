@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Gestion de usuarios (crear administradores, empleados y clientes).
- * Equivalente a AdminUsuarioController.php.
- */
+ * Gestion de usuarios (crear administradores, empleados y clientes). */
+
 @Controller
 @RequestMapping("/admin/usuarios")
 @RequiredArgsConstructor

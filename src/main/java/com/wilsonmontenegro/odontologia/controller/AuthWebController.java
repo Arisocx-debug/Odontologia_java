@@ -116,7 +116,7 @@ public class AuthWebController {
 
                 model.addAttribute(
                         "emailError",
-                        "📧 Ingresa un correo electrónico válido para mantener segura tu cuenta."
+                        "Ingresa un correo electrónico válido para mantener segura tu cuenta."
                 );
             }
 
@@ -145,7 +145,7 @@ public class AuthWebController {
 
             model.addAttribute(
                     "mensaje",
-                    "✅ ¡Registro exitoso! Tu cuenta ha sido creada correctamente."
+                    "¡Registro exitoso! Tu cuenta ha sido creada correctamente."
             );
 
             return "auth/login";
@@ -158,7 +158,7 @@ public class AuthWebController {
 
             model.addAttribute(
                     "error",
-                    "⚠️ Este correo ya está registrado. Si ya tienes una cuenta, inicia sesión."
+                    "Este correo ya está registrado. Si ya tienes una cuenta, inicia sesión."
             );
 
             return "auth/register";
