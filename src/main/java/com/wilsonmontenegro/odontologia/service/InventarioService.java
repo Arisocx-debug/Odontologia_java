@@ -40,6 +40,17 @@ public class InventarioService {
         return inventarioRepository.buscar(texto.trim());
     }
 
+    @Transactional(readOnly = true)
+    public List<Inventario> buscarConFiltros(String buscar, String proveedor,
+            EstadoInventario estado, Integer stockMinimo, Integer stockMaximo) {
+        if (stockMinimo != null && stockMaximo != null && stockMinimo > stockMaximo) {
+            throw new BusinessException("El stock mínimo no puede ser mayor que el máximo.");
+        }
+
+        return inventarioRepository.buscarConFiltros(
+                buscar == null ? "" : buscar.trim(), proveedor, estado, stockMinimo, stockMaximo);
+    }
+
     /**
      * Obtiene un producto de inventario por su ID.
      */

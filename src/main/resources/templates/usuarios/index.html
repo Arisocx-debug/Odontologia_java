@@ -15,14 +15,15 @@
             </button>
         </div>
 
-        <form th:action="@{/admin/usuarios}" method="get" class="row g-2 mb-4">
-            <div class="col-md-8">
-                <input type="text" name="search" th:value="${search}" class="form-control"
-                    placeholder="Buscar por nombre, correo, telefono, estado o rol...">
-            </div>
-            <div class="col-md-2"><button type="submit" class="btn btn-outline-primary w-100">Buscar</button></div>
-            <div class="col-md-2"><a th:href="@{/admin/usuarios}" class="btn btn-outline-secondary w-100">Limpiar</a>
-            </div>
+        <form th:action="@{/admin/usuarios}" method="get" class="card shadow-sm border-0 mb-4">
+            <div class="card-body"><div class="row g-3">
+                <div class="col-md-4"><label class="form-label">Buscar</label><input type="text" name="search" th:value="${search}" class="form-control" placeholder="Nombre, correo o teléfono..."></div>
+                <div class="col-md-3"><label class="form-label">Rol</label><select name="rol" class="form-select"><option value="">Todos</option><option th:each="r : ${roles}" th:value="${r}" th:selected="${rol == r}" th:text="${r}"></option></select></div>
+                <div class="col-md-2"><label class="form-label">Estado</label><select name="estado" class="form-select"><option value="">Todos</option><option th:each="e : ${T(com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario).values()}" th:value="${e}" th:selected="${estado == e}" th:text="${e}"></option></select></div>
+                <div class="col-md-3"><label class="form-label">Desde</label><input type="date" name="fechaDesde" th:value="${fechaDesde}" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Hasta</label><input type="date" name="fechaHasta" th:value="${fechaHasta}" class="form-control"></div>
+                <div class="col-md-6 d-flex align-items-end gap-2"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button><a th:href="@{/admin/usuarios}" class="btn btn-outline-secondary">Limpiar</a></div>
+            </div></div>
         </form>
 
         <div class="table-responsive">

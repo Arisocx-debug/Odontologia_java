@@ -2,6 +2,7 @@ package com.wilsonmontenegro.odontologia.controller;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario;
 import com.wilsonmontenegro.odontologia.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,22 +22,20 @@ public class UsuarioWebController {
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Rol rol,
+            @RequestParam(required = false) EstadoUsuario estado,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta,
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        String busqueda = search.trim();
-
-        if (!busqueda.isEmpty() && busqueda.matches("\\d+") && busqueda.length() < 7) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Solo se puede buscar por nombre, correo, teléfono, estado o rol.");
-
-            return "redirect:/admin/usuarios";
-        }
-
-        model.addAttribute("usuarios", usuarioService.buscar(search));
+        model.addAttribute("usuarios", usuarioService.buscarConFiltros(search, rol, estado, fechaDesde, fechaHasta));
         model.addAttribute("search", search);
         model.addAttribute("roles", Rol.values());
+        model.addAttribute("rol", rol);
+        model.addAttribute("estado", estado);
+        model.addAttribute("fechaDesde", fechaDesde);
+        model.addAttribute("fechaHasta", fechaHasta);
 
         return "usuarios/index";
     }

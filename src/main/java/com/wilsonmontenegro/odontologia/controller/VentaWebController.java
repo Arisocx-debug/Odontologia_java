@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Venta;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoVenta;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
@@ -50,11 +51,16 @@ public class VentaWebController {
 
     @GetMapping({"/admin/ventas", "/empleado/ventas"})
     public String index(
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long productoId,
+            @RequestParam(required = false) EstadoVenta estado,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta,
             Model model,
             HttpServletRequest request) {
 
-        List<Venta> ventas =
-                ventaService.listarTodas();
+        List<Venta> ventas = ventaService.buscarConFiltros(
+                productoId, estado, fechaDesde, fechaHasta, search);
 
         model.addAttribute(
                 "ventas",
@@ -65,6 +71,11 @@ public class VentaWebController {
                 "productos",
                 inventarioService.listarTodos()
         );
+        model.addAttribute("search", search);
+        model.addAttribute("productoId", productoId);
+        model.addAttribute("estado", estado);
+        model.addAttribute("fechaDesde", fechaDesde);
+        model.addAttribute("fechaHasta", fechaHasta);
 
         String base =
                 request.getRequestURI()

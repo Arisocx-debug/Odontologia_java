@@ -118,6 +118,46 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
             @Param("usuarioId") Long usuarioId,
             @Param("limite") LocalDateTime limite);
 
+    @Query("""
+            SELECT DISTINCT c FROM Cita c
+            LEFT JOIN FETCH c.cliente cl
+            LEFT JOIN FETCH cl.usuario
+            LEFT JOIN FETCH c.servicio s
+            WHERE (c.estado IN ('PENDIENTE', 'CONFIRMADA')
+                OR (c.estado IN ('ATENDIDA', 'CANCELADA') AND c.fechaEntrada >= :limite))
+            AND (:clienteId IS NULL OR cl.idCliente = :clienteId)
+            AND (:servicioId IS NULL OR s.idServicio = :servicioId)
+            AND (:fechaDesde IS NULL OR c.fechaEntrada >= :fechaDesde)
+            AND (:fechaHasta IS NULL OR c.fechaEntrada <= :fechaHasta)
+            AND (:estado IS NULL OR c.estado = :estado)
+            AND (:busqueda = '' OR LOWER(cl.usuario.name) LIKE LOWER(CONCAT('%', :busqueda, '%'))
+                OR LOWER(cl.usuario.email) LIKE LOWER(CONCAT('%', :busqueda, '%'))
+                OR LOWER(s.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')))
+            ORDER BY c.fechaEntrada DESC
+            """)
+    List<Cita> buscarCitasActivas(@Param("limite") LocalDateTime limite,
+            @Param("clienteId") Long clienteId, @Param("servicioId") Long servicioId,
+            @Param("fechaDesde") LocalDateTime fechaDesde, @Param("fechaHasta") LocalDateTime fechaHasta,
+            @Param("estado") EstadoCita estado, @Param("busqueda") String busqueda);
+
+    @Query("""
+            SELECT DISTINCT c FROM Cita c
+            LEFT JOIN FETCH c.servicio s
+            WHERE c.cliente.usuario.id = :usuarioId
+            AND (c.estado IN ('PENDIENTE', 'CONFIRMADA')
+                OR (c.estado IN ('ATENDIDA', 'CANCELADA') AND c.fechaEntrada >= :limite))
+            AND (:servicioId IS NULL OR s.idServicio = :servicioId)
+            AND (:fechaDesde IS NULL OR c.fechaEntrada >= :fechaDesde)
+            AND (:fechaHasta IS NULL OR c.fechaEntrada <= :fechaHasta)
+            AND (:estado IS NULL OR c.estado = :estado)
+            AND (:busqueda = '' OR LOWER(s.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')))
+            ORDER BY c.fechaEntrada DESC
+            """)
+    List<Cita> buscarCitasActivasPorUsuario(@Param("usuarioId") Long usuarioId,
+            @Param("limite") LocalDateTime limite, @Param("servicioId") Long servicioId,
+            @Param("fechaDesde") LocalDateTime fechaDesde, @Param("fechaHasta") LocalDateTime fechaHasta,
+            @Param("estado") EstadoCita estado, @Param("busqueda") String busqueda);
+
     /*
      * ============================================================
      * HISTORIAL

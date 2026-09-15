@@ -38,6 +38,16 @@
 
     </div>
 
+    <form th:action="@{${base}}" method="get" class="card shadow-sm border-0 mb-4">
+        <div class="card-body"><div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Buscar</label><input type="text" name="search" th:value="${search}" class="form-control" placeholder="Producto, comprador o correo..."></div>
+            <div class="col-md-3"><label class="form-label">Producto</label><select name="productoId" class="form-select"><option value="">Todos</option><option th:each="producto : ${productos}" th:value="${producto.idInventario}" th:selected="${productoId != null and productoId == producto.idInventario}" th:text="${producto.nombre}"></option></select></div>
+            <div class="col-md-2"><label class="form-label">Estado</label><select name="estado" class="form-select"><option value="">Todos</option><option th:each="e : ${T(com.wilsonmontenegro.odontologia.model.enums.EstadoVenta).values()}" th:value="${e}" th:selected="${estado == e}" th:text="${e}"></option></select></div>
+            <div class="col-md-3"><label class="form-label">Desde</label><input type="date" name="fechaDesde" th:value="${fechaDesde}" class="form-control"></div>
+            <div class="col-md-3"><label class="form-label">Hasta</label><input type="date" name="fechaHasta" th:value="${fechaHasta}" class="form-control"></div>
+            <div class="col-md-6 d-flex align-items-end gap-2"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button><a th:href="@{${base}}" class="btn btn-outline-secondary">Limpiar</a></div>
+        </div></div>
+    </form>
 
     <!-- =========================================================
          TABLA DE VENTAS

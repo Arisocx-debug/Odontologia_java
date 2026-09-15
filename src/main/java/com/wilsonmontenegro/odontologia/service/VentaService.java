@@ -2,6 +2,7 @@ package com.wilsonmontenegro.odontologia.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,18 @@ public class VentaService {
 
     public List<Venta> listarTodas() {
         return ventaRepository.findAllConProductoYComprador();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Venta> buscarConFiltros(Long productoId, EstadoVenta estado,
+            String fechaDesde, String fechaHasta, String busqueda) {
+        LocalDateTime desde = fechaDesde == null || fechaDesde.isBlank()
+                ? null : LocalDate.parse(fechaDesde).atStartOfDay();
+        LocalDateTime hasta = fechaHasta == null || fechaHasta.isBlank()
+                ? null : LocalDate.parse(fechaHasta).atTime(23, 59, 59);
+
+        return ventaRepository.buscarConFiltros(productoId, estado, desde, hasta,
+                busqueda == null ? "" : busqueda.trim());
     }
 
 

@@ -2,6 +2,7 @@ package com.wilsonmontenegro.odontologia.controller;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Cita;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoCita;
 import com.wilsonmontenegro.odontologia.service.CitaService;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
@@ -46,14 +47,26 @@ public class ClienteCitaWebController {
     // ============================================================
 
     @GetMapping
-    public String index(Model model) {
+    public String index(
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long servicioId,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta,
+            @RequestParam(required = false) EstadoCita estado,
+            Model model) {
 
         Long usuarioId = AuthUtil.idUsuarioActual();
 
         model.addAttribute(
                 "citas",
-                citaService.listarCitasActivasPorUsuario(
-                        usuarioId));
+                citaService.buscarCitasActivasPorUsuario(
+                        usuarioId, servicioId, fechaDesde, fechaHasta, estado, search));
+
+        model.addAttribute("search", search);
+        model.addAttribute("servicioId", servicioId);
+        model.addAttribute("fechaDesde", fechaDesde);
+        model.addAttribute("fechaHasta", fechaHasta);
+        model.addAttribute("estado", estado);
 
         model.addAttribute(
                 "servicios",

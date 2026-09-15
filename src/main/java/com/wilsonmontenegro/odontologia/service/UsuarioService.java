@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Gestion de usuarios desde el panel de administrador. Equivalente a
@@ -41,6 +43,16 @@ public class UsuarioService {
             return usuarioRepository.findAll();
         }
         return usuarioRepository.buscar(texto.trim());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> buscarConFiltros(String search, Rol rol, EstadoUsuario estado,
+            String fechaDesde, String fechaHasta) {
+        LocalDateTime desde = fechaDesde == null || fechaDesde.isBlank()
+                ? null : LocalDate.parse(fechaDesde).atStartOfDay();
+        LocalDateTime hasta = fechaHasta == null || fechaHasta.isBlank()
+                ? null : LocalDate.parse(fechaHasta).atTime(23, 59, 59);
+        return usuarioRepository.buscarConFiltros(search == null ? "" : search.trim(), rol, estado, desde, hasta);
     }
 
     public Usuario obtenerPorId(Long id) {

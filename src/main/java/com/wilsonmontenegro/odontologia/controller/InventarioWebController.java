@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Inventario;
+import com.wilsonmontenegro.odontologia.model.enums.EstadoInventario;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.ProductoImagenService;
 import com.wilsonmontenegro.odontologia.service.ProveedorService;
@@ -36,19 +37,29 @@ public class InventarioWebController {
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String buscar,
+            @RequestParam(required = false) String proveedor,
+            @RequestParam(required = false) EstadoInventario estado,
+            @RequestParam(required = false) Integer stockMinimo,
+            @RequestParam(required = false) Integer stockMaximo,
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        if (!buscar.trim().isEmpty() && buscar.trim().matches("\\d+")) {
+        try {
+            model.addAttribute("items", inventarioService.buscarConFiltros(
+                    buscar, proveedor, estado, stockMinimo, stockMaximo));
+        } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute(
                     "error",
-                    "Solo se puede buscar por nombre, estado o proveedor.");
+                    e.getMessage());
 
             return "redirect:/inventario";
         }
 
-        model.addAttribute("items", inventarioService.buscar(buscar));
         model.addAttribute("buscar", buscar);
+        model.addAttribute("proveedor", proveedor);
+        model.addAttribute("estado", estado);
+        model.addAttribute("stockMinimo", stockMinimo);
+        model.addAttribute("stockMaximo", stockMaximo);
         model.addAttribute("proveedores", proveedorService.listarTodos());
 
         return "inventario/index";

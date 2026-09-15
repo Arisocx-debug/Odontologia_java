@@ -37,39 +37,17 @@ public class AdminCitaWebController {
     @GetMapping
     public String index(
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long clienteId,
+            @RequestParam(required = false) Long servicioId,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta,
+            @RequestParam(required = false) EstadoCita estado,
             Model model) {
 
         try {
 
-            if (search == null || search.isBlank()) {
-
-                model.addAttribute(
-                        "citas",
-                        citaService.listarCitasActivas());
-
-            } else {
-
-                // La búsqueda normal también debe respetar las citas activas.
-                model.addAttribute(
-                        "citas",
-                        citaService.buscar(search)
-                                .stream()
-                                .filter(cita -> {
-
-                                    if (cita.getEstado() == EstadoCita.PENDIENTE
-                                            || cita.getEstado() == EstadoCita.CONFIRMADA) {
-                                        return true;
-                                    }
-
-                                    if (cita.getFechaEntrada() == null) {
-                                        return false;
-                                    }
-
-                                    return cita.getFechaEntrada()
-                                            .isAfter(LocalDateTime.now().minusDays(2));
-                                })
-                                .toList());
-            }
+            model.addAttribute("citas", citaService.buscarCitasActivas(clienteId, servicioId,
+                    fechaDesde, fechaHasta, estado, search));
 
         } catch (BusinessException e) {
 
@@ -81,6 +59,11 @@ public class AdminCitaWebController {
         }
 
         model.addAttribute("search", search);
+        model.addAttribute("clienteId", clienteId);
+        model.addAttribute("servicioId", servicioId);
+        model.addAttribute("fechaDesde", fechaDesde);
+        model.addAttribute("fechaHasta", fechaHasta);
+        model.addAttribute("estado", estado);
 
         model.addAttribute(
                 "clientes",
