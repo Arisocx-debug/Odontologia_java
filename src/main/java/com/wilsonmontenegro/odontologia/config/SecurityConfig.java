@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.http.HttpMethod;
@@ -34,6 +37,7 @@ public class SecurityConfig {
     private final GoogleOAuth2UserService googleOAuth2UserService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(
@@ -59,7 +63,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
+        ClientRegistrationRepository clientRegistrationRepository) {
+
+     DefaultOAuth2AuthorizationRequestResolver resolver =
+            new DefaultOAuth2AuthorizationRequestResolver(
+                    clientRegistrationRepository,
+                    "/oauth2/authorization"
+            );
+
+     resolver.setAuthorizationRequestCustomizer(
+            customizer -> customizer.additionalParameters(
+                    params -> params.put("prompt", "select_account")
+            )
+    );
+
+    return resolver;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(
+        HttpSecurity http,
+        OAuth2AuthorizationRequestResolver authorizationRequestResolver
+    ) throws Exception {
 
         http
                 // CSRF para formularios Thymeleaf
@@ -145,32 +171,42 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(googleOAuth2UserService))
-                        .successHandler((request, response, authentication) -> {
 
+                        .authorizationEndpoint(endpoint ->
+                                endpoint.authorizationRequestResolver(
+                                        authorizationRequestResolver
+                                )
+                        )
+                
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(googleOAuth2UserService)
+                        )
+                
+                        .successHandler((request, response, authentication) -> {
+                
                             GoogleOAuth2User principal =
                                     (GoogleOAuth2User) authentication.getPrincipal();
-
+                
                             switch (principal.getUsuario().getRol()) {
-
+                
                                 case ADMINISTRADOR:
                                     response.sendRedirect("/admin/dashboard");
                                     break;
-
+                
                                 case EMPLEADO:
                                     response.sendRedirect("/empleado/dashboard");
                                     break;
-
+                
                                 case CLIENTE:
                                     response.sendRedirect("/cliente/citas");
                                     break;
-
+                
                                 default:
                                     response.sendRedirect("/");
                                     break;
                             }
-                        }))
+                        })
+                )
 
                 // Filtro JWT SOLO para API
                 .addFilterBefore(
