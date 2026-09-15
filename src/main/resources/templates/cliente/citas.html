@@ -15,6 +15,17 @@
             </button>
         </div>
 
+        <form th:action="@{/cliente/citas}" method="get" class="card shadow-sm border-0 mb-4">
+            <div class="card-body"><div class="row g-3">
+                <div class="col-md-4"><label class="form-label">Buscar servicio</label><input type="text" name="search" th:value="${search}" class="form-control" placeholder="Nombre del servicio..."></div>
+                <div class="col-md-3"><label class="form-label">Servicio</label><select name="servicioId" class="form-select"><option value="">Todos</option><option th:each="servicio : ${servicios}" th:value="${servicio.idServicio}" th:selected="${servicioId != null and servicioId == servicio.idServicio}" th:text="${servicio.nombre}"></option></select></div>
+                <div class="col-md-2"><label class="form-label">Estado</label><select name="estado" class="form-select"><option value="">Todos</option><option th:each="e : ${T(com.wilsonmontenegro.odontologia.model.enums.EstadoCita).values()}" th:value="${e}" th:selected="${estado == e}" th:text="${e}"></option></select></div>
+                <div class="col-md-3"><label class="form-label">Desde</label><input type="date" name="fechaDesde" th:value="${fechaDesde}" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Hasta</label><input type="date" name="fechaHasta" th:value="${fechaHasta}" class="form-control"></div>
+                <div class="col-md-6 d-flex align-items-end gap-2"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button><a th:href="@{/cliente/citas}" class="btn btn-outline-secondary">Limpiar</a></div>
+            </div></div>
+        </form>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle bg-white shadow-sm">
                 <thead class="table-primary">

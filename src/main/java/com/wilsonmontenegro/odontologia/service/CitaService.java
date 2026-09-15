@@ -83,6 +83,32 @@ public class CitaService {
                                 limite);
         }
 
+        @Transactional(readOnly = true)
+        public List<Cita> buscarCitasActivas(Long clienteId, Long servicioId, String fechaDesde,
+                        String fechaHasta, EstadoCita estado, String busqueda) {
+                return citaRepository.buscarCitasActivas(LocalDateTime.now().minusDays(2), clienteId, servicioId,
+                                inicioDelDia(fechaDesde), finDelDia(fechaHasta), estado, normalizar(busqueda));
+        }
+
+        @Transactional(readOnly = true)
+        public List<Cita> buscarCitasActivasPorUsuario(Long usuarioId, Long servicioId, String fechaDesde,
+                        String fechaHasta, EstadoCita estado, String busqueda) {
+                return citaRepository.buscarCitasActivasPorUsuario(usuarioId, LocalDateTime.now().minusDays(2),
+                                servicioId, inicioDelDia(fechaDesde), finDelDia(fechaHasta), estado, normalizar(busqueda));
+        }
+
+        private LocalDateTime inicioDelDia(String fecha) {
+                return fecha == null || fecha.isBlank() ? null : LocalDate.parse(fecha).atStartOfDay();
+        }
+
+        private LocalDateTime finDelDia(String fecha) {
+                return fecha == null || fecha.isBlank() ? null : LocalDate.parse(fecha).atTime(23, 59, 59);
+        }
+
+        private String normalizar(String texto) {
+                return texto == null ? "" : texto.trim();
+        }
+
         /**
          * Historial general.
          */
