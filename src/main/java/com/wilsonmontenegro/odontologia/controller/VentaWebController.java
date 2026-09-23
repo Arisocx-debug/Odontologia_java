@@ -101,8 +101,11 @@ public class VentaWebController {
         var ventas = ventaService.buscarConFiltros(productoId, estado, fechaDesde, fechaHasta, search);
         String[] encabezados = {"ID", "Producto", "Cantidad", "Total", "Estado", "Fecha"};
         var filas = ventas.stream().map(v -> new String[]{String.valueOf(v.getIdVenta()), v.getProducto().getNombre(), String.valueOf(v.getCantidad()), String.valueOf(v.getTotal()), String.valueOf(v.getEstado()), String.valueOf(v.getCreatedAt())}).toList();
+        var criterios = ReporteService.filtros("Búsqueda", search, "Producto", productoId, "Estado", estado,
+                "Desde", fechaDesde, "Hasta", fechaHasta);
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de ventas", encabezados, filas) : reporteService.generarExcel("Reporte de ventas", encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de ventas", encabezados, filas, criterios)
+                : reporteService.generarExcel("Reporte de ventas", encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ventas." + extension).contentType(tipo).body(contenido);

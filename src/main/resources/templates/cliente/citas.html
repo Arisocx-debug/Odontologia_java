@@ -26,7 +26,10 @@
             </div></div>
         </form>
 
-        <div class="d-flex justify-content-end gap-2 mb-3"><a th:href="@{/cliente/citas/reporte/pdf(search=${search},servicioId=${servicioId},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a><a th:href="@{/cliente/citas/reporte/excel(search=${search},servicioId=${servicioId},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a></div>
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a th:href="@{/cliente/citas/reporte/pdf(search=${search},servicioId=${servicioId},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+            <a th:href="@{/cliente/citas/reporte/excel(search=${search},servicioId=${servicioId},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a>
+        </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle bg-white shadow-sm">
@@ -59,10 +62,6 @@
                             <a th:href="@{'/cliente/citas/' + ${cita.idCita} + '/pdf'}" target="_blank"
                                 class="btn btn-sm btn-outline-danger" title="PDF">
                                 <i class="fa-solid fa-file-pdf"></i>
-                            </a>
-                            <a th:href="@{'/cliente/citas/' + ${cita.idCita} + '/excel'}"
-                                class="btn btn-sm btn-outline-success" title="Excel">
-                                <i class="fa-solid fa-file-excel"></i>
                             </a>
                             <form th:if="${cita.estado.name() == 'PENDIENTE' or cita.estado.name() == 'CONFIRMADA'}"
                                 th:action="@{'/cliente/citas/' + ${cita.idCita}}" method="post" class="d-inline"

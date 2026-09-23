@@ -52,8 +52,11 @@ public class UsuarioWebController {
         var usuarios = usuarioService.buscarConFiltros(search, rol, estado, fechaDesde, fechaHasta);
         String[] encabezados = {"ID", "Nombre", "Correo", "Teléfono", "Rol", "Estado"};
         var filas = usuarios.stream().map(u -> new String[]{String.valueOf(u.getId()), u.getName(), u.getEmail(), u.getTelefono(), String.valueOf(u.getRol()), String.valueOf(u.getEstado())}).toList();
+        var criterios = ReporteService.filtros("Búsqueda", search, "Rol", rol, "Estado", estado,
+                "Desde", fechaDesde, "Hasta", fechaHasta);
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de usuarios", encabezados, filas) : reporteService.generarExcel("Reporte de usuarios", encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de usuarios", encabezados, filas, criterios)
+                : reporteService.generarExcel("Reporte de usuarios", encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=usuarios." + extension).contentType(tipo).body(contenido);

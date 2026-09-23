@@ -77,8 +77,11 @@ public class InventarioWebController {
         var items = inventarioService.buscarConFiltros(buscar, proveedor, estado, stockMinimo, stockMaximo);
         String[] encabezados = {"ID", "Producto", "Stock", "Precio", "Proveedor", "Estado"};
         var filas = items.stream().map(i -> new String[]{String.valueOf(i.getIdInventario()), i.getNombre(), String.valueOf(i.getStock()), String.valueOf(i.getPrecioUnitario()), i.getNombreProveedor(), String.valueOf(i.getEstado())}).toList();
+        var criterios = ReporteService.filtros("Búsqueda", buscar, "Proveedor", proveedor, "Estado", estado,
+                "Stock mínimo", stockMinimo, "Stock máximo", stockMaximo);
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de inventario", encabezados, filas) : reporteService.generarExcel("Reporte de inventario", encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de inventario", encabezados, filas, criterios)
+                : reporteService.generarExcel("Reporte de inventario", encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=inventario." + extension).contentType(tipo).body(contenido);

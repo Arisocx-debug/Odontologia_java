@@ -49,14 +49,15 @@ public class ServicioWebController {
                 String.valueOf(servicio.getIdServicio()), servicio.getNombre(),
                 servicio.getDescripcion(), String.valueOf(servicio.getCosto())
         }).toList();
-        return respuestaReporte(formato, "Reporte de servicios", "servicios", encabezados, filas);
+        var criterios = ReporteService.filtros("Búsqueda", search, "Costo mínimo", costoMinimo, "Costo máximo", costoMaximo);
+        return respuestaReporte(formato, "Reporte de servicios", "servicios", encabezados, filas, criterios);
     }
 
     private ResponseEntity<byte[]> respuestaReporte(String formato, String titulo, String archivo,
-            String[] encabezados, java.util.List<String[]> filas) {
+            String[] encabezados, java.util.List<String[]> filas, java.util.Map<String, String> criterios) {
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas)
-                : reporteService.generarExcel(titulo, encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas, criterios)
+                : reporteService.generarExcel(titulo, encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF
                 : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

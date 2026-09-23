@@ -51,9 +51,10 @@ public class ProveedorWebController {
                 proveedor.getTelefono(), proveedor.getEmail(), proveedor.getDireccion(),
                 proveedor.getCreatedAt() == null ? "" : proveedor.getCreatedAt().toLocalDate().toString()
         }).toList();
+        var criterios = ReporteService.filtros("Búsqueda", search, "Desde", fechaDesde, "Hasta", fechaHasta);
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de proveedores", encabezados, filas)
-                : reporteService.generarExcel("Reporte de proveedores", encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de proveedores", encabezados, filas, criterios)
+                : reporteService.generarExcel("Reporte de proveedores", encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF
                 : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

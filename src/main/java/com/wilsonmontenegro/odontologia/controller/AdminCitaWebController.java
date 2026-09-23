@@ -89,12 +89,16 @@ public class AdminCitaWebController {
         var filas = citas.stream().map(c -> new String[]{String.valueOf(c.getIdCita()),
                 c.getCliente().getUsuario().getName(), c.getServicio().getNombre(),
                 String.valueOf(c.getFechaEntrada()), String.valueOf(c.getEstado())}).toList();
-        return respuestaReporte(formato, "Reporte de citas", encabezados, filas);
+        var criterios = ReporteService.filtros("Búsqueda", search, "Cliente", clienteId, "Servicio", servicioId,
+                "Desde", fechaDesde, "Hasta", fechaHasta, "Estado", estado);
+        return respuestaReporte(formato, "Reporte de citas", encabezados, filas, criterios);
     }
 
-    private ResponseEntity<byte[]> respuestaReporte(String formato, String titulo, String[] encabezados, java.util.List<String[]> filas) {
+    private ResponseEntity<byte[]> respuestaReporte(String formato, String titulo, String[] encabezados,
+            java.util.List<String[]> filas, java.util.Map<String, String> criterios) {
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas) : reporteService.generarExcel(titulo, encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas, criterios)
+                : reporteService.generarExcel(titulo, encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
         MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=citas." + extension).contentType(tipo).body(contenido);

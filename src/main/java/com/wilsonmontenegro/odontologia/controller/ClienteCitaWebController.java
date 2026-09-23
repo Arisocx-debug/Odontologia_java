@@ -4,7 +4,6 @@ import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.Cita;
 import com.wilsonmontenegro.odontologia.model.enums.EstadoCita;
 import com.wilsonmontenegro.odontologia.service.CitaService;
-import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
 import com.wilsonmontenegro.odontologia.service.ReporteService;
 import com.wilsonmontenegro.odontologia.service.ServicioService;
@@ -31,7 +30,6 @@ import java.time.LocalDateTime;
  * * Editar sus propias citas.
  * * Cancelar sus propias citas.
  * * Generar PDF de sus propias citas.
- * * Generar Excel de sus propias citas.
  */
 @Controller
 @RequestMapping("/cliente/citas")
@@ -41,7 +39,6 @@ public class ClienteCitaWebController {
     private final CitaService citaService;
     private final ServicioService servicioService;
     private final PdfService pdfService;
-    private final ExcelService excelService;
     private final ReporteService reporteService;
 
     // ============================================================
@@ -85,11 +82,18 @@ public class ClienteCitaWebController {
         var citas = citaService.buscarCitasActivasPorUsuario(AuthUtil.idUsuarioActual(), servicioId, fechaDesde, fechaHasta, estado, search);
         String[] encabezados = {"ID", "Servicio", "Entrada", "Estado"};
         var filas = citas.stream().map(c -> new String[]{String.valueOf(c.getIdCita()), c.getServicio().getNombre(), String.valueOf(c.getFechaEntrada()), String.valueOf(c.getEstado())}).toList();
+        var criterios = ReporteService.filtros("Búsqueda", search, "Servicio", servicioId,
+                "Desde", fechaDesde, "Hasta", fechaHasta, "Estado", estado);
         boolean pdf = "pdf".equalsIgnoreCase(formato);
-        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de mis citas", encabezados, filas) : reporteService.generarExcel("Reporte de mis citas", encabezados, filas);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de mis citas", encabezados, filas, criterios)
+                : reporteService.generarExcel("Reporte de mis citas", encabezados, filas, criterios);
         String extension = pdf ? "pdf" : "xlsx";
-        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mis-citas." + extension).contentType(tipo).body(contenido);
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF
+                : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mis-citas." + extension)
+                .contentType(tipo)
+                .body(contenido);
     }
 
     // ============================================================
@@ -266,34 +270,4 @@ public class ClienteCitaWebController {
 
     }
 
-    // ============================================================
-    // GENERAR EXCEL
-    // ============================================================
-
-    @GetMapping("/{id}/excel")
-    public ResponseEntity<byte[]> generarExcel(
-            @PathVariable Long id) {
-
-        Long usuarioId = AuthUtil.idUsuarioActual();
-
-        Cita cita = citaService.obtenerPorId(id);
-
-        // SEGURIDAD:
-        // Solo puede generar el Excel de una cita propia.
-        citaService.validarPropietario(
-                cita,
-                usuarioId);
-
-        byte[] excel = excelService.generarExcelFactura(cita);
-
-        return ResponseEntity.ok()
-                .contentType(
-                        MediaType.parseMediaType(
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=Factura_" + id + ".xlsx")
-                .body(excel);
-
-    }
 }

@@ -112,6 +112,10 @@
 
         </form>
 
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a th:href="@{/cliente/historial-citas/reporte/pdf(search=${search},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+            <a th:href="@{/cliente/historial-citas/reporte/excel(search=${search},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta},estado=${estado})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a>
+        </div>
 
         <!-- TABLA -->
 
@@ -170,13 +174,6 @@
                                 title="PDF">
 
                                 <i class="fa-solid fa-file-pdf"></i>
-
-                            </a>
-
-                            <a th:href="@{'/cliente/citas/' +
-                            ${cita.idCita} + '/excel'}" class="btn btn-sm btn-outline-success" title="Excel">
-
-                                <i class="fa-solid fa-file-excel"></i>
 
                             </a>
 
