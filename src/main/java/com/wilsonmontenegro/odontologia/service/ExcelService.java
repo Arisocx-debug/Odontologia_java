@@ -1,7 +1,6 @@
 package com.wilsonmontenegro.odontologia.service;
 
 import com.wilsonmontenegro.odontologia.model.Cita;
-import com.wilsonmontenegro.odontologia.model.Venta;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
- * Generacion de reportes Excel. Equivalente a app/Exports/FacturaExport.php y VentaExport.php
+ * Generacion de reportes Excel. Equivalente a app/Exports/FacturaExport.php
  * (que usaban Maatwebsite\Excel + PhpSpreadsheet).
  */
 @Service
@@ -59,37 +58,6 @@ public class ExcelService {
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException("Error generando el Excel de la factura", e);
-        }
-    }
-
-    public byte[] generarExcelVenta(Venta venta) {
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Venta");
-
-            CellStyle estiloTitulo = estiloTitulo(workbook);
-            CellStyle estiloEtiqueta = estiloEtiqueta(workbook);
-
-            int fila = 0;
-            crearFilaTitulo(sheet, fila++, "FACTURA DE VENTA", estiloTitulo);
-            fila++;
-
-            String nombreProducto = venta.getProducto() != null ? venta.getProducto().getNombre() : "Producto eliminado";
-
-            fila = crearFilaDato(sheet, fila, "Factura N.", String.valueOf(venta.getIdVenta()), estiloEtiqueta);
-            fila = crearFilaDato(sheet, fila, "Producto", nombreProducto, estiloEtiqueta);
-            fila = crearFilaDato(sheet, fila, "Cantidad", String.valueOf(venta.getCantidad()), estiloEtiqueta);
-            fila = crearFilaDato(sheet, fila, "Subtotal", "$ " + FORMATO_MONEDA.format(venta.getSubtotal()), estiloEtiqueta);
-            fila = crearFilaDato(sheet, fila, "Descuento", "$ " + FORMATO_MONEDA.format(venta.getDescuento()), estiloEtiqueta);
-            fila = crearFilaDato(sheet, fila, "Total", "$ " + FORMATO_MONEDA.format(venta.getTotal()), estiloEtiqueta);
-            crearFilaDato(sheet, fila, "Fecha de compra",
-                    venta.getCreatedAt() != null ? venta.getCreatedAt().format(FORMATO_FECHA) : "-", estiloEtiqueta);
-
-            for (int i = 0; i < 2; i++) sheet.autoSizeColumn(i);
-
-            workbook.write(baos);
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error generando el Excel de la venta", e);
         }
     }
 
