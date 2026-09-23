@@ -11,7 +11,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.wilsonmontenegro.odontologia.model.Cita;
-import com.wilsonmontenegro.odontologia.model.Venta;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ import java.util.Locale;
 
 /**
  * Generacion de reportes PDF. Equivalente al uso de Barryvdh\DomPDF\Facade\Pdf en Laravel
- * (metodos generarPdf() de AdminCitaController, EmpleadoCitaController, ClienteCitaController y VentaController).
+ * (metodos generarPdf() de AdminCitaController, EmpleadoCitaController y ClienteCitaController).
  */
 @Service
 @RequiredArgsConstructor
@@ -67,33 +66,6 @@ public class PdfService {
             return baos.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException("Error generando el PDF de la cita", e);
-        }
-    }
-
-    public byte[] generarPdfVenta(Venta venta) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
-            Document document = new Document(pdfDoc);
-
-            document.add(tituloPrincipal("FACTURA DE VENTA"));
-
-            Table tabla = new Table(UnitValue.createPercentArray(new float[]{1, 2})).useAllAvailableWidth();
-            String nombreProducto = venta.getProducto() != null ? venta.getProducto().getNombre() : "Producto eliminado";
-
-            agregarFila(tabla, "Factura N.", String.valueOf(venta.getIdVenta()));
-            agregarFila(tabla, "Producto", nombreProducto);
-            agregarFila(tabla, "Cantidad", String.valueOf(venta.getCantidad()));
-            agregarFila(tabla, "Subtotal", "$ " + FORMATO_MONEDA.format(venta.getSubtotal()));
-            agregarFila(tabla, "Descuento", "$ " + FORMATO_MONEDA.format(venta.getDescuento()));
-            agregarFila(tabla, "Total", "$ " + FORMATO_MONEDA.format(venta.getTotal()));
-            agregarFila(tabla, "Fecha de compra",
-                    venta.getCreatedAt() != null ? venta.getCreatedAt().format(FORMATO_FECHA) : "-");
-
-            document.add(tabla);
-            document.close();
-            return baos.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException("Error generando el PDF de la venta", e);
         }
     }
 

@@ -169,12 +169,7 @@ public class InventarioService {
     /**
      * Descuenta stock de un producto.
      *
-     * IMPORTANTE:
-     *
-     * Este método es para operaciones internas.
-     * La compra del cliente actualmente se procesa desde
-     * VentaService.registrarVenta(), donde además se registra
-     * la venta y el movimiento de inventario.
+     * Este método es para operaciones internas de inventario.
      */
     @Transactional
     public void descontarStock(
