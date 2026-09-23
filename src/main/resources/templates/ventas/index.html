@@ -49,6 +49,8 @@
         </div></div>
     </form>
 
+    <div class="d-flex justify-content-end gap-2 mb-3"><a th:href="@{${base + '/reporte/pdf'}(search=${search},productoId=${productoId},estado=${estado},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a><a th:href="@{${base + '/reporte/excel'}(search=${search},productoId=${productoId},estado=${estado},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a></div>
+
     <!-- =========================================================
          TABLA DE VENTAS
          ========================================================= -->

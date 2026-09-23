@@ -23,6 +23,26 @@ public class ServicioService {
         return servicioRepository.findAll();
     }
 
+    /**
+     * Busca servicios por texto y rango de costo. Los criterios se combinan,
+     * por lo que todos los filtros diligenciados deben cumplirse.
+     */
+    public List<Servicio> buscarConFiltros(String search, BigDecimal costoMinimo, BigDecimal costoMaximo) {
+        String termino = search == null ? "" : search.trim().toLowerCase();
+
+        return servicioRepository.findAllByOrderByNombreAsc().stream()
+                .filter(servicio -> termino.isBlank()
+                        || contiene(servicio.getNombre(), termino)
+                        || contiene(servicio.getDescripcion(), termino))
+                .filter(servicio -> costoMinimo == null || servicio.getCosto().compareTo(costoMinimo) >= 0)
+                .filter(servicio -> costoMaximo == null || servicio.getCosto().compareTo(costoMaximo) <= 0)
+                .toList();
+    }
+
+    private boolean contiene(String valor, String termino) {
+        return valor != null && valor.toLowerCase().contains(termino);
+    }
+
     public Servicio obtenerPorId(Long id) {
         return servicioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Servicio no encontrado"));

@@ -26,6 +26,8 @@
             </div></div>
         </form>
 
+        <div class="d-flex justify-content-end gap-2 mb-3"><a th:href="@{/admin/usuarios/reporte/pdf(search=${search},rol=${rol},estado=${estado},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a><a th:href="@{/admin/usuarios/reporte/excel(search=${search},rol=${rol},estado=${estado},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a></div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle bg-white shadow-sm tabla-usuarios">
                 <thead class="table-primary">

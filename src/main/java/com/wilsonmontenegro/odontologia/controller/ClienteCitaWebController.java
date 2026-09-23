@@ -6,6 +6,7 @@ import com.wilsonmontenegro.odontologia.model.enums.EstadoCita;
 import com.wilsonmontenegro.odontologia.service.CitaService;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 import com.wilsonmontenegro.odontologia.service.ServicioService;
 import com.wilsonmontenegro.odontologia.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class ClienteCitaWebController {
     private final ServicioService servicioService;
     private final PdfService pdfService;
     private final ExcelService excelService;
+    private final ReporteService reporteService;
 
     // ============================================================
     // LISTAR CITAS
@@ -73,6 +75,21 @@ public class ClienteCitaWebController {
                 servicioService.listarTodos());
 
         return "cliente/citas";
+    }
+
+    @GetMapping("/reporte/{formato}")
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato,
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long servicioId, @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta, @RequestParam(required = false) EstadoCita estado) {
+        var citas = citaService.buscarCitasActivasPorUsuario(AuthUtil.idUsuarioActual(), servicioId, fechaDesde, fechaHasta, estado, search);
+        String[] encabezados = {"ID", "Servicio", "Entrada", "Estado"};
+        var filas = citas.stream().map(c -> new String[]{String.valueOf(c.getIdCita()), c.getServicio().getNombre(), String.valueOf(c.getFechaEntrada()), String.valueOf(c.getEstado())}).toList();
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de mis citas", encabezados, filas) : reporteService.generarExcel("Reporte de mis citas", encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=mis-citas." + extension).contentType(tipo).body(contenido);
     }
 
     // ============================================================

@@ -4,8 +4,12 @@ import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.model.enums.Rol;
 import com.wilsonmontenegro.odontologia.model.enums.EstadoUsuario;
 import com.wilsonmontenegro.odontologia.service.UsuarioService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UsuarioWebController {
 
     private final UsuarioService usuarioService;
+    private final ReporteService reporteService;
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String search,
@@ -38,6 +43,20 @@ public class UsuarioWebController {
         model.addAttribute("fechaHasta", fechaHasta);
 
         return "usuarios/index";
+    }
+
+    @GetMapping("/reporte/{formato}")
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato, @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Rol rol, @RequestParam(required = false) EstadoUsuario estado,
+            @RequestParam(required = false) String fechaDesde, @RequestParam(required = false) String fechaHasta) {
+        var usuarios = usuarioService.buscarConFiltros(search, rol, estado, fechaDesde, fechaHasta);
+        String[] encabezados = {"ID", "Nombre", "Correo", "Teléfono", "Rol", "Estado"};
+        var filas = usuarios.stream().map(u -> new String[]{String.valueOf(u.getId()), u.getName(), u.getEmail(), u.getTelefono(), String.valueOf(u.getRol()), String.valueOf(u.getEstado())}).toList();
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de usuarios", encabezados, filas) : reporteService.generarExcel("Reporte de usuarios", encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=usuarios." + extension).contentType(tipo).body(contenido);
     }
 
     @PostMapping

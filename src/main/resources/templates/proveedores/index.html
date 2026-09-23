@@ -20,6 +20,20 @@
             </button>
         </div>
 
+        <form th:action="@{/admin/proveedores}" method="get" class="card shadow-sm border-0 mb-4">
+            <div class="card-body row g-3 align-items-end">
+                <div class="col-md-5"><label class="form-label">Buscar</label><input name="search" class="form-control" th:value="${search}" placeholder="Nombre, contacto, telefono, correo o direccion"></div>
+                <div class="col-md-2"><label class="form-label">Registrado desde</label><input type="date" name="fechaDesde" class="form-control" th:value="${fechaDesde}"></div>
+                <div class="col-md-2"><label class="form-label">Registrado hasta</label><input type="date" name="fechaHasta" class="form-control" th:value="${fechaHasta}"></div>
+                <div class="col-md-3 d-flex gap-2"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filtrar</button><a th:href="@{/admin/proveedores}" class="btn btn-outline-secondary">Limpiar</a></div>
+            </div>
+        </form>
+
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a th:href="@{/admin/proveedores/reporte/pdf(search=${search},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+            <a th:href="@{/admin/proveedores/reporte/excel(search=${search},fechaDesde=${fechaDesde},fechaHasta=${fechaHasta})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle bg-white shadow-sm">
 

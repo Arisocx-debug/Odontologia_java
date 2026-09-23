@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,32 @@ public class ProveedorService {
 
     public List<Proveedor> listarTodos() {
         return proveedorRepository.findAll();
+    }
+
+    /**
+     * Busca proveedores por sus datos de contacto y fecha de registro.
+     * Los criterios indicados se aplican simultaneamente.
+     */
+    public List<Proveedor> buscarConFiltros(String search, LocalDate fechaDesde, LocalDate fechaHasta) {
+        String termino = search == null ? "" : search.trim().toLowerCase();
+
+        return proveedorRepository.findAll().stream()
+                .filter(proveedor -> termino.isBlank()
+                        || contiene(proveedor.getNombre(), termino)
+                        || contiene(proveedor.getContacto(), termino)
+                        || contiene(proveedor.getTelefono(), termino)
+                        || contiene(proveedor.getEmail(), termino)
+                        || contiene(proveedor.getDireccion(), termino))
+                .filter(proveedor -> fechaDesde == null || (proveedor.getCreatedAt() != null
+                        && !proveedor.getCreatedAt().toLocalDate().isBefore(fechaDesde)))
+                .filter(proveedor -> fechaHasta == null || (proveedor.getCreatedAt() != null
+                        && !proveedor.getCreatedAt().toLocalDate().isAfter(fechaHasta)))
+                .sorted(java.util.Comparator.comparing(Proveedor::getNombre, String.CASE_INSENSITIVE_ORDER))
+                .toList();
+    }
+
+    private boolean contiene(String valor, String termino) {
+        return valor != null && valor.toLowerCase().contains(termino);
     }
 
     public Proveedor obtenerPorId(Long id) {

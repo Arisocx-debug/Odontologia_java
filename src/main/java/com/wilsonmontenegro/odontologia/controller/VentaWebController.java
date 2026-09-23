@@ -22,6 +22,7 @@ import com.wilsonmontenegro.odontologia.model.enums.EstadoVenta;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 import com.wilsonmontenegro.odontologia.service.VentaService;
 import com.wilsonmontenegro.odontologia.util.AuthUtil;
 
@@ -43,6 +44,7 @@ public class VentaWebController {
     private final InventarioService inventarioService;
     private final PdfService pdfService;
     private final ExcelService excelService;
+    private final ReporteService reporteService;
 
 
     // ============================================================
@@ -89,6 +91,21 @@ public class VentaWebController {
         );
 
         return "ventas/index";
+    }
+
+    @GetMapping({"/admin/ventas/reporte/{formato}", "/empleado/ventas/reporte/{formato}"})
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato,
+            @RequestParam(required = false, defaultValue = "") String search, @RequestParam(required = false) Long productoId,
+            @RequestParam(required = false) com.wilsonmontenegro.odontologia.model.enums.EstadoVenta estado,
+            @RequestParam(required = false) String fechaDesde, @RequestParam(required = false) String fechaHasta) {
+        var ventas = ventaService.buscarConFiltros(productoId, estado, fechaDesde, fechaHasta, search);
+        String[] encabezados = {"ID", "Producto", "Cantidad", "Total", "Estado", "Fecha"};
+        var filas = ventas.stream().map(v -> new String[]{String.valueOf(v.getIdVenta()), v.getProducto().getNombre(), String.valueOf(v.getCantidad()), String.valueOf(v.getTotal()), String.valueOf(v.getEstado()), String.valueOf(v.getCreatedAt())}).toList();
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de ventas", encabezados, filas) : reporteService.generarExcel("Reporte de ventas", encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ventas." + extension).contentType(tipo).body(contenido);
     }
 
 

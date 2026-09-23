@@ -2,7 +2,11 @@ package com.wilsonmontenegro.odontologia.controller;
 
 import com.wilsonmontenegro.odontologia.exception.BusinessException;
 import com.wilsonmontenegro.odontologia.service.ServicioService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +24,46 @@ import java.math.BigDecimal;
 public class ServicioWebController {
 
     private final ServicioService servicioService;
+    private final ReporteService reporteService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("servicios", servicioService.listarTodos());
+    public String index(@RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) BigDecimal costoMinimo,
+            @RequestParam(required = false) BigDecimal costoMaximo,
+            Model model) {
+        model.addAttribute("servicios", servicioService.buscarConFiltros(search, costoMinimo, costoMaximo));
+        model.addAttribute("search", search);
+        model.addAttribute("costoMinimo", costoMinimo);
+        model.addAttribute("costoMaximo", costoMaximo);
         return "servicios/index";
+    }
+
+    @GetMapping("/reporte/{formato}")
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato,
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) BigDecimal costoMinimo,
+            @RequestParam(required = false) BigDecimal costoMaximo) {
+        var servicios = servicioService.buscarConFiltros(search, costoMinimo, costoMaximo);
+        String[] encabezados = {"ID", "Nombre", "Descripcion", "Costo"};
+        var filas = servicios.stream().map(servicio -> new String[]{
+                String.valueOf(servicio.getIdServicio()), servicio.getNombre(),
+                servicio.getDescripcion(), String.valueOf(servicio.getCosto())
+        }).toList();
+        return respuestaReporte(formato, "Reporte de servicios", "servicios", encabezados, filas);
+    }
+
+    private ResponseEntity<byte[]> respuestaReporte(String formato, String titulo, String archivo,
+            String[] encabezados, java.util.List<String[]> filas) {
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas)
+                : reporteService.generarExcel(titulo, encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF
+                : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + archivo + "." + extension)
+                .contentType(tipo)
+                .body(contenido);
     }
 
     @GetMapping("/publicos")

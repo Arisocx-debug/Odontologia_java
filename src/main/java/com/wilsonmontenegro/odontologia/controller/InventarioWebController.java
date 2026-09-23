@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,7 @@ import com.wilsonmontenegro.odontologia.model.enums.EstadoInventario;
 import com.wilsonmontenegro.odontologia.service.InventarioService;
 import com.wilsonmontenegro.odontologia.service.ProductoImagenService;
 import com.wilsonmontenegro.odontologia.service.ProveedorService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +38,7 @@ public class InventarioWebController {
     private final InventarioService inventarioService;
     private final ProveedorService proveedorService;
     private final ProductoImagenService productoImagenService;
+    private final ReporteService reporteService;
 
     @GetMapping
     public String index(@RequestParam(required = false, defaultValue = "") String buscar,
@@ -63,6 +68,20 @@ public class InventarioWebController {
         model.addAttribute("proveedores", proveedorService.listarTodos());
 
         return "inventario/index";
+    }
+
+    @GetMapping("/reporte/{formato}")
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato, @RequestParam(required = false, defaultValue = "") String buscar,
+            @RequestParam(required = false) String proveedor, @RequestParam(required = false) EstadoInventario estado,
+            @RequestParam(required = false) Integer stockMinimo, @RequestParam(required = false) Integer stockMaximo) {
+        var items = inventarioService.buscarConFiltros(buscar, proveedor, estado, stockMinimo, stockMaximo);
+        String[] encabezados = {"ID", "Producto", "Stock", "Precio", "Proveedor", "Estado"};
+        var filas = items.stream().map(i -> new String[]{String.valueOf(i.getIdInventario()), i.getNombre(), String.valueOf(i.getStock()), String.valueOf(i.getPrecioUnitario()), i.getNombreProveedor(), String.valueOf(i.getEstado())}).toList();
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf("Reporte de inventario", encabezados, filas) : reporteService.generarExcel("Reporte de inventario", encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=inventario." + extension).contentType(tipo).body(contenido);
     }
 
     @PostMapping

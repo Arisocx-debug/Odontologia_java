@@ -23,6 +23,7 @@ import com.wilsonmontenegro.odontologia.service.CitaService;
 import com.wilsonmontenegro.odontologia.service.ClienteConsultaService;
 import com.wilsonmontenegro.odontologia.service.ExcelService;
 import com.wilsonmontenegro.odontologia.service.PdfService;
+import com.wilsonmontenegro.odontologia.service.ReporteService;
 import com.wilsonmontenegro.odontologia.service.ServicioService;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class EmpleadoCitaWebController {
     private final ClienteConsultaService clienteConsultaService;
     private final PdfService pdfService;
     private final ExcelService excelService;
+    private final ReporteService reporteService;
 
     @GetMapping
     public String index(
@@ -83,6 +85,26 @@ public class EmpleadoCitaWebController {
                 servicioService.listarTodos());
 
         return "empleado/citas";
+    }
+
+    @GetMapping("/reporte/{formato}")
+    public ResponseEntity<byte[]> reporte(@PathVariable String formato,
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long clienteId, @RequestParam(required = false) Long servicioId,
+            @RequestParam(required = false) String fechaDesde, @RequestParam(required = false) String fechaHasta,
+            @RequestParam(required = false) EstadoCita estado) {
+        var citas = citaService.buscarCitasActivas(clienteId, servicioId, fechaDesde, fechaHasta, estado, search);
+        String[] encabezados = {"ID", "Paciente", "Servicio", "Entrada", "Estado"};
+        var filas = citas.stream().map(c -> new String[]{String.valueOf(c.getIdCita()), c.getCliente().getUsuario().getName(), c.getServicio().getNombre(), String.valueOf(c.getFechaEntrada()), String.valueOf(c.getEstado())}).toList();
+        return respuestaReporte(formato, "Reporte de citas", encabezados, filas);
+    }
+
+    private ResponseEntity<byte[]> respuestaReporte(String formato, String titulo, String[] encabezados, java.util.List<String[]> filas) {
+        boolean pdf = "pdf".equalsIgnoreCase(formato);
+        byte[] contenido = pdf ? reporteService.generarPdf(titulo, encabezados, filas) : reporteService.generarExcel(titulo, encabezados, filas);
+        String extension = pdf ? "pdf" : "xlsx";
+        MediaType tipo = pdf ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=citas." + extension).contentType(tipo).body(contenido);
     }
 
     @PostMapping

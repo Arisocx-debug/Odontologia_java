@@ -21,6 +21,8 @@
         </div></div>
     </form>
 
+    <div class="d-flex justify-content-end gap-2 mb-3"><a th:href="@{/inventario/reporte/pdf(buscar=${buscar},proveedor=${proveedor},estado=${estado},stockMinimo=${stockMinimo},stockMaximo=${stockMaximo})}" class="btn btn-outline-danger"><i class="fa-solid fa-file-pdf"></i> PDF</a><a th:href="@{/inventario/reporte/excel(buscar=${buscar},proveedor=${proveedor},estado=${estado},stockMinimo=${stockMinimo},stockMaximo=${stockMaximo})}" class="btn btn-outline-success"><i class="fa-solid fa-file-excel"></i> Excel</a></div>
+
     <!-- Tabla -->
     <div class="table-responsive">
         <table class="table table-hover align-middle bg-white shadow-sm">
